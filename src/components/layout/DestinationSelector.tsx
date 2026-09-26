@@ -3,12 +3,10 @@
 import { REGIONS, TIER_LABEL } from "@data/regions";
 import type { Destination, Region, Tier } from "@data/types";
 import { motion } from "framer-motion";
-import { ChevronDown, MapPin, Mountain, Search, Sprout, X } from "lucide-react";
+import { Mountain, Search, Sprout, X } from "lucide-react";
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Sheet } from "@/components/ui/Sheet";
 import { SmartImage } from "@/components/ui/SmartImage";
-import { useTrip } from "@/context/TripContext";
-import { sound } from "@/lib/audio";
 import { groupDirectory, searchDestinations } from "@/lib/destinations";
 import { cn } from "@/lib/format";
 import { destinationSource } from "@/lib/imageSources";
@@ -23,51 +21,7 @@ export function TierBadge({ tier, className }: { tier: Tier; className?: string 
   return <span className={cn("pill !px-2 !py-0.5 !text-[10px]", TIER_TONE[tier], className)}>{TIER_LABEL[tier]}</span>;
 }
 
-/** Header trigger + searchable, region → tier grouped combobox. */
-export function DestinationSelector({ compact = false }: { compact?: boolean }) {
-  const { destination, setDestination } = useTrip();
-  const [open, setOpen] = useState(false);
-
-  return (
-    <>
-      <button
-        type="button"
-        onClick={() => {
-          sound.play("pop");
-          setOpen(true);
-        }}
-        className={cn(
-          "group flex min-h-[44px] min-w-0 items-center gap-2 rounded-full border border-[var(--line)] bg-white/70 py-1.5 pl-2 pr-3 text-left shadow-sm backdrop-blur transition hover:bg-white dark:bg-white/5 dark:hover:bg-white/10",
-          compact ? "max-w-[190px]" : "max-w-[320px]",
-        )}
-        aria-haspopup="dialog"
-        aria-label={`Destination: ${destination.name}. Change destination`}
-      >
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-marigold-500 to-rose-500 text-white">
-          <MapPin className="h-4 w-4" />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold leading-tight">{destination.name}</span>
-          <span className="muted block truncate text-[11px] leading-tight">
-            {destination.state} · {destination.regionName}
-          </span>
-        </span>
-        <ChevronDown className="h-4 w-4 shrink-0 opacity-60 transition group-hover:translate-y-0.5" />
-      </button>
-      <DestinationPicker
-        open={open}
-        onClose={() => setOpen(false)}
-        currentId={destination.id}
-        onSelect={(id) => {
-          sound.play("flip");
-          setDestination(id);
-          setOpen(false);
-        }}
-      />
-    </>
-  );
-}
-
+/** Searchable, region → tier grouped destination combobox (used by the home search and in-page chips). */
 export function DestinationPicker({
   open,
   onClose,

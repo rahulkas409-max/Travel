@@ -4,7 +4,6 @@ import { LayoutGroup, motion } from "framer-motion";
 import {
   BedDouble,
   CalendarRange,
-  Compass,
   Dices,
   Grid2x2,
   House,
@@ -24,7 +23,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
 import { cn } from "@/lib/format";
-import { DestinationSelector } from "./DestinationSelector";
+import { Logo } from "@/components/ui/Logo";
 
 export const NAV_ITEMS = [
   { href: "/", label: "Home", short: "Home", icon: House, blurb: "Search & inspiration" },
@@ -96,18 +95,9 @@ export function Navbar() {
     <>
       <header className="no-print sticky top-0 z-50 border-b border-[var(--line)] bg-[rgb(var(--bg-rgb)/0.92)] backdrop-blur-xl" style={{ paddingTop: "var(--safe-top)" }}>
         <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-6">
-          <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="RoamIndia home" onClick={() => sound.unlock()}>
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-marigold-500 via-rose-500 to-sage-500 text-white shadow-lift">
-              <Compass className="h-5 w-5" />
-            </span>
-            <span className="hidden font-display text-xl font-bold tracking-tight sm:inline">
-              Roam<span className="text-rose-500">India</span>
-            </span>
+          <Link href="/" className="flex shrink-0 items-center" aria-label="RoamIndia home" onClick={() => sound.unlock()}>
+            <Logo />
           </Link>
-
-          <div className="min-w-0 flex-1 sm:flex-none">
-            <DestinationSelector compact />
-          </div>
 
           <LayoutGroup id="top-nav">
             <nav className="ml-auto hidden items-center gap-0.5 xl:flex" aria-label="Main">

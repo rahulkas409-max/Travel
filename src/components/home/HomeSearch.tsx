@@ -5,7 +5,8 @@ import type { Occasion } from "@data/types";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { BedDouble, CalendarRange, ChevronDown, Dices, Minus, Plus, Search, Sprout, TrainFront, UtensilsCrossed } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { DateRange } from "@/components/ui/DateRange";
 import { DestinationPicker } from "@/components/layout/DestinationSelector";
 import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
@@ -32,14 +33,6 @@ const CTA: Record<Service, string> = {
   transit: "SHOW TRANSIT GUIDE",
 };
 
-function formatDate(iso: string) {
-  const d = new Date(`${iso}T00:00:00`);
-  return {
-    big: `${d.getDate()} ${d.toLocaleDateString("en-IN", { month: "short" })}’${String(d.getFullYear()).slice(2)}`,
-    small: d.toLocaleDateString("en-IN", { weekday: "long" }),
-  };
-}
-
 function inThreeWeeks() {
   const d = new Date();
   d.setDate(d.getDate() + 21);
@@ -57,7 +50,6 @@ export function HomeSearch() {
   const [days, setDays] = useState(config.days);
   const [people, setPeople] = useState(config.travellers);
   const [picker, setPicker] = useState(false);
-  const dateRef = useRef<HTMLInputElement>(null);
 
   // Adopt the saved trip once LocalStorage has loaded.
   useEffect(() => {
@@ -71,8 +63,8 @@ export function HomeSearch() {
   }, [hydrated]);
 
   const dest = getDestination(destId);
-  const date = formatDate(start || inThreeWeeks());
-  const showTripFields = service === "plan" || service === "farm" || service === "stay";
+  const showTripFields = service === "plan" || service === "farm" || service === "stay" || service === "transit";
+  const showOccasion = service === "plan" || service === "farm" || service === "stay";
 
   const go = () => {
     sound.unlock();
@@ -123,7 +115,7 @@ export function HomeSearch() {
         </LayoutGroup>
 
         {/* Trip type radios (like One-way / Round-trip) */}
-        {showTripFields && (
+        {showOccasion && (
           <div className="no-scrollbar -mx-3 mt-4 flex gap-2 overflow-x-auto px-3 sm:mx-0 sm:px-0">
             {OCCASIONS.map((o) => (
               <button
@@ -156,8 +148,8 @@ export function HomeSearch() {
                 <p className="muted mt-1 text-sm">Answer 4 vibe questions — we match all 68 destinations and spin a weighted wheel for your surprise trip.</p>
               </div>
             ) : (
-              <div className={cn("mt-4 grid overflow-hidden rounded-2xl border border-[var(--line)]", showTripFields ? "grid-cols-2 lg:grid-cols-[1.6fr_1fr_0.8fr_0.9fr]" : "grid-cols-1")}>
-                <Field label="Where to" className={cn("col-span-2 lg:col-span-1", showTripFields && "border-b lg:border-b-0 lg:border-r")} onClick={() => setPicker(true)}>
+              <div className={cn("mt-4 grid overflow-hidden rounded-2xl border border-[var(--line)]", showTripFields ? "grid-cols-1 lg:grid-cols-[1.25fr_2fr_1fr]" : "grid-cols-1")}>
+                <Field label="Where to" className={cn(showTripFields && "border-b lg:border-b-0 lg:border-r")} onClick={() => setPicker(true)}>
                   <p className="truncate text-[1.6rem] font-extrabold leading-tight">{dest.name}</p>
                   <p className="muted truncate text-xs">
                     {dest.state} · {dest.regionName}
@@ -165,28 +157,18 @@ export function HomeSearch() {
                 </Field>
                 {showTripFields && (
                   <>
-                    <Field
-                      label={service === "plan" ? "Start date" : "Check-in"}
-                      className="border-r"
-                      onClick={() => {
-                        const el = dateRef.current;
-                        if (!el) return;
-                        try {
-                          el.showPicker();
-                        } catch {
-                          el.focus();
-                          el.click();
-                        }
+                    <DateRange
+                      className="border-b border-[var(--line)] lg:border-b-0 lg:border-r"
+                      start={start}
+                      length={days}
+                      unit={service === "farm" || service === "stay" ? "nights" : "days"}
+                      labels={service === "transit" ? ["Departure", "Return"] : undefined}
+                      onChange={(st, len) => {
+                        setStart(st);
+                        setDays(len);
                       }}
-                    >
-                      <p className="text-[1.6rem] font-extrabold leading-tight">{date.big}</p>
-                      <p className="muted text-xs">{date.small}</p>
-                      <input ref={dateRef} type="date" value={start} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setStart(e.target.value)} className="pointer-events-none absolute bottom-0 left-0 h-px w-px opacity-0" tabIndex={-1} aria-label="Start date" />
-                    </Field>
-                    <Field label={service === "plan" ? "Days" : "Nights"} className="lg:border-r">
-                      <Counter value={days} min={1} max={10} onChange={setDays} />
-                    </Field>
-                    <Field label="Travellers" className="col-span-2 border-t lg:col-span-1 lg:border-t-0">
+                    />
+                    <Field label="Travellers">
                       <Counter value={people} min={1} max={200} onChange={setPeople} suffix={people > 1 ? "people" : "person"} />
                     </Field>
                   </>

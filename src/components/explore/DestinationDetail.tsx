@@ -325,7 +325,7 @@ export function DestinationDetail({ id }: { id: string }) {
             </div>
           ))}
         </div>
-        <LiveLinks title="Book your travel" links={travelLinks(d)} />
+        <LiveLinks title="Book your travel" links={travelLinks(d, config.startDate, config.days)} />
       </section>
 
       {/* ───── Nearby ───── */}
