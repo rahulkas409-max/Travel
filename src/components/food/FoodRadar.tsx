@@ -11,6 +11,8 @@ import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
 import { foodFor } from "@/lib/destinations";
 import { cn, inr } from "@/lib/format";
+import { dishSource } from "@/lib/imageSources";
+import { foodSearchUrl } from "@/lib/links";
 
 const TYPES: (EaterySpotType | "All")[] = ["All", "Legendary", "Street Lane", "Dhaba", "Cafe", "Fine Local"];
 const TYPE_EMOJI: Record<EaterySpotType, string> = { Legendary: "🏆", "Street Lane": "🛺", Dhaba: "🍛", Cafe: "☕", "Fine Local": "🍽️" };
@@ -62,10 +64,10 @@ export function FoodRadar() {
           <AnimatePresence mode="popLayout">
             {dishes.map((d, i) => (
               <motion.article key={d.id} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ delay: i * 0.04 }} className="glass overflow-hidden">
-                <SmartImage imageKey="food" label={d.name} seed={d.id} width={600} className="aspect-[4/3] w-full">
+                <SmartImage source={dishSource(d)} width={600} className="aspect-[4/3] w-full">
                   <button
                     type="button"
-                    onClick={() => openPhoto({ imageKey: "food", label: d.name, seed: d.id, caption: d.localName ?? dest.name })}
+                    onClick={() => openPhoto({ source: dishSource(d), label: d.name, caption: d.localName ?? dest.name })}
                     className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur"
                   >
                     <Camera className="h-3 w-3" /> Save
@@ -152,7 +154,12 @@ export function FoodRadar() {
             ))}
           </div>
         )}
-        <p className="muted mt-3 text-xs">Hours change often — call ahead or check a maps listing before heading out.</p>
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="muted text-xs">Hours change often — call ahead or check a maps listing before heading out.</p>
+          <a href={foodSearchUrl(dest)} target="_blank" rel="noopener noreferrer" className="btn-ghost !min-h-[40px] !text-xs">
+            <MapPin className="h-4 w-4" /> More local favourites on Google Maps ↗
+          </a>
+        </div>
       </section>
     </div>
   );

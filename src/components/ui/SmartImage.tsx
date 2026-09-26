@@ -1,71 +1,168 @@
 "use client";
 
-import { getImage, postcardDataUrl, type ResolvedImage } from "@/lib/images";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/format";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { postcardDataUrl, type ResolvedImage } from "@/lib/images";
+import { curatedFallback, keySource, openToResolved, peekOpen, resolveOpen, type ImageSource } from "@/lib/imageSources";
 
 interface Props {
-  imageKey: string;
-  label: string;
+  /** Preferred: an open-image source (Wikipedia / Commons → curated → postcard). */
+  source?: ImageSource;
+  /** Legacy/curated-only shorthand. */
+  imageKey?: string;
+  label?: string;
   seed?: string | number;
   width?: number;
   className?: string;
   imgClassName?: string;
   priority?: boolean;
-  onResolved?: (img: ResolvedImage) => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
+  /** Small "© author" chip for open images (hero/gallery use). */
+  showCredit?: boolean | "top";
 }
 
-/**
- * <img> with a shimmer placeholder and a generated-postcard fallback, so a
- * missing CDN photo never shows a broken icon.
- */
-export function SmartImage({ imageKey, label, seed = 0, width = 900, className, imgClassName, priority, children }: Props) {
-  const image = useMemo(() => getImage(imageKey, label, seed, width), [imageKey, label, seed, width]);
-  const [src, setSrc] = useState(image.src);
-  const [loaded, setLoaded] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
+type Stage = "resolving" | "open" | "curated" | "art";
 
-  const fallback = () => {
-    const art = postcardDataUrl(image.family, label, 900, 600, false);
-    if (art && imgRef.current?.src !== art) setSrc(art);
-    else setLoaded(true);
+/**
+ * Image with a shimmer placeholder that resolves lazily (only when near the
+ * viewport) to a live, open-licensed photo, falling back to a curated photo and
+ * finally to generated postcard art — never a broken image.
+ */
+export function SmartImage({ source, imageKey, label, seed = 0, width = 900, className, imgClassName, priority, children, showCredit }: Props) {
+  const src: ImageSource = useMemo(
+    () => source ?? keySource(imageKey ?? "travel", label ?? "", seed),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [source?.wiki, source?.fallbackKey, source?.label, source?.seed, JSON.stringify(source?.queries), imageKey, label, seed],
+  );
+  const wantsOpen = !!(src.wiki || src.queries?.length);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [img, setImg] = useState<ResolvedImage | null>(null);
+  const [stage, setStage] = useState<Stage>("resolving");
+  const [loaded, setLoaded] = useState(false);
+
+  // Resolve (instantly from cache when possible; otherwise once near the viewport).
+  useEffect(() => {
+    let cancelled = false;
+    setLoaded(false);
+    if (!wantsOpen) {
+      setImg(curatedFallback(src, width));
+      setStage("curated");
+      return;
+    }
+    const known = peekOpen(src);
+    if (known) {
+      setImg(openToResolved(known, src));
+      setStage("open");
+      return;
+    }
+    if (known === null) {
+      setImg(curatedFallback(src, width));
+      setStage("curated");
+      return;
+    }
+    setImg(null);
+    setStage("resolving");
+    const go = () => {
+      const deadline = setTimeout(() => {
+        if (!cancelled) {
+          setImg((cur) => cur ?? curatedFallback(src, width));
+          setStage((st) => (st === "resolving" ? "curated" : st));
+        }
+      }, 7000);
+      resolveOpen(src).then((open) => {
+        clearTimeout(deadline);
+        if (cancelled) return;
+        if (open) {
+          setImg(openToResolved(open, src));
+          setStage("open");
+          setLoaded(false);
+        } else {
+          setImg((cur) => cur ?? curatedFallback(src, width));
+          setStage((st) => (st === "resolving" ? "curated" : st));
+        }
+      });
+    };
+    if (priority || typeof IntersectionObserver === "undefined") {
+      go();
+      return () => {
+        cancelled = true;
+      };
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          go();
+        }
+      },
+      { rootMargin: "400px" },
+    );
+    if (wrapRef.current) io.observe(wrapRef.current);
+    return () => {
+      cancelled = true;
+      io.disconnect();
+    };
+  }, [src, width, wantsOpen, priority]);
+
+  const fail = () => {
+    if (stage === "open") {
+      setImg(curatedFallback(src, width));
+      setStage("curated");
+      setLoaded(false);
+    } else if (stage === "curated") {
+      const art = postcardDataUrl(img?.family ?? "city", src.label, 900, 600, false);
+      if (art && img) {
+        setImg({ ...img, src: art });
+        setStage("art");
+      } else setLoaded(true);
+    } else setLoaded(true);
   };
 
-  useEffect(() => {
-    setSrc(image.src);
-    setLoaded(false);
-  }, [image.src]);
-
-  // Images that finished (or failed) before hydration never fire React's onLoad/onError.
+  // Images that finished (or failed) before hydration never fire onLoad/onError.
   useEffect(() => {
     const el = imgRef.current;
-    if (!el || !el.complete) return;
+    if (!el || !img || !el.complete) return;
     if (el.naturalWidth > 0) setLoaded(true);
-    else fallback();
+    else fail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [src]);
+  }, [img?.src]);
 
   return (
-    <div className={cn("relative overflow-hidden bg-sand-200 dark:bg-slate-800", className)}>
+    <div ref={wrapRef} className={cn(/(^|\s)(absolute|fixed)(\s|$)/.test(className ?? "") ? "" : "relative", "overflow-hidden bg-sand-200 dark:bg-slate-800", className)}>
       {!loaded && <div className="shimmer absolute inset-0" aria-hidden />}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt={label}
-        loading={priority ? "eager" : "lazy"}
-        decoding="async"
-        draggable={false}
-        ref={imgRef}
-        onLoad={() => setLoaded(true)}
-        onError={fallback}
-        className={cn(
-          "h-full w-full object-cover transition duration-700",
-          loaded ? "scale-100 opacity-100" : "scale-105 opacity-0",
-          imgClassName,
-        )}
-      />
+      {img && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          ref={imgRef}
+          key={img.src}
+          src={img.src}
+          alt={src.label}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          draggable={false}
+          referrerPolicy="no-referrer"
+          onLoad={() => setLoaded(true)}
+          onError={fail}
+          className={cn("h-full w-full object-cover transition duration-700", loaded ? "scale-100 opacity-100" : "scale-105 opacity-0", imgClassName)}
+        />
+      )}
       {children}
+      {showCredit && stage === "open" && img?.provider && (
+        <a
+          href={img.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className={cn(
+            "absolute z-10 max-w-[70%] truncate rounded-full bg-black/45 px-2 py-0.5 text-[10px] text-white/90 backdrop-blur hover:bg-black/65",
+            showCredit === "top" ? "right-3 top-3" : "bottom-1.5 left-1.5",
+          )}
+          title={img.credit}
+        >
+          📷 {img.author ? img.author : img.provider}
+        </a>
+      )}
     </div>
   );
 }

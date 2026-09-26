@@ -146,6 +146,13 @@ export interface ResolvedImage {
   /** Phone wallpaper crop (1290×2796 — iPhone Pro Max size, scales down well). */
   wallpaper: string;
   credit: string;
+  /* Open-licensed (Wikimedia) images carry attribution details. */
+  open?: boolean;
+  provider?: string;
+  sourceUrl?: string;
+  file?: string | null;
+  author?: string;
+  license?: string;
 }
 
 /**
@@ -377,6 +384,28 @@ export function downloadBlob(blob: Blob, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 30_000);
 }
 
+/** Centre-crop any image blob to 1290×2796 (phone wallpaper) with a canvas. */
+async function cropToWallpaper(blob: Blob): Promise<Blob | null> {
+  try {
+    const bmp = await createImageBitmap(blob);
+    const W = 1290;
+    const H = 2796;
+    const canvas = document.createElement("canvas");
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    const scale = Math.max(W / bmp.width, H / bmp.height);
+    const dw = bmp.width * scale;
+    const dh = bmp.height * scale;
+    ctx.drawImage(bmp, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    bmp.close?.();
+    return await new Promise((res) => canvas.toBlob((b) => res(b), "image/jpeg", 0.9));
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Save a high-res image to the device.
  * - `share: true` opens the native share sheet (iOS/iPadOS "Save Image" → Photos).
@@ -393,6 +422,8 @@ export async function saveImage(
 
   let blob = await fetchBlob(url);
   let generated = false;
+  // Wikimedia originals aren't server-cropped — crop to a phone wallpaper locally.
+  if (blob && mode === "wallpaper" && image.open) blob = (await cropToWallpaper(blob)) ?? blob;
   if (!blob) {
     const [w, h] = mode === "wallpaper" ? [1290, 2796] : [2400, 1600];
     blob = await postcardBlob(image.family, image.label, w, h);

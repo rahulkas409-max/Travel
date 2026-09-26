@@ -1,5 +1,6 @@
 "use client";
 
+import { DESTINATION_BY_ID } from "@data/destinations";
 import type { Property } from "@data/types";
 import { motion } from "framer-motion";
 import { Camera, Heart, MessageSquareText, Users, Wifi } from "lucide-react";
@@ -10,6 +11,7 @@ import { Stars } from "@/components/ui/Stars";
 import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
 import { cn, inr } from "@/lib/format";
+import { propertySource } from "@/lib/imageSources";
 import { SuitabilityPill } from "./NeighborhoodTag";
 
 export function fitsBudget(p: Property, budgetPerPerson: number, travellers: number): boolean {
@@ -38,7 +40,7 @@ export function StayCard({ p, onOpen, variant = "stay", children }: Props) {
   return (
     <motion.article layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.97 }} className="glass flex flex-col overflow-hidden">
       <div className="relative">
-        <SmartImage imageKey={p.imageKeys[photo]} label={p.name} seed={`${p.id}-${photo}`} width={800} className="aspect-[16/10] w-full" />
+        <SmartImage source={propertySource(p, photo, DESTINATION_BY_ID[p.destinationId])} width={800} className="aspect-[16/10] w-full" />
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
           <span className="pill bg-white/90 text-slate-900 shadow backdrop-blur">{p.kind}</span>
           <motion.button
@@ -73,7 +75,7 @@ export function StayCard({ p, onOpen, variant = "stay", children }: Props) {
           </div>
           <button
             type="button"
-            onClick={() => openPhoto({ imageKey: p.imageKeys[photo], label: p.name, seed: `${p.id}-${photo}`, caption: `${p.kind} · ${p.neighbourhood}` })}
+            onClick={() => openPhoto({ source: propertySource(p, photo, DESTINATION_BY_ID[p.destinationId]), label: p.name, caption: `${p.kind} · ${p.neighbourhood}` })}
             className="inline-flex items-center gap-1 rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur"
           >
             <Camera className="h-3 w-3" /> Save Image

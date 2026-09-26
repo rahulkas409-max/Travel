@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
+import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
 import "./globals.css";
+
+const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--nf-sans", display: "swap" });
+const display = Playfair_Display({ subsets: ["latin"], variable: "--nf-display", display: "swap", weight: ["600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: {
@@ -27,7 +31,7 @@ const themeScript = `(function(){try{var t=JSON.parse(localStorage.getItem('roam
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" suppressHydrationWarning>
+    <html lang="en-IN" suppressHydrationWarning className={`${sans.variable} ${display.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

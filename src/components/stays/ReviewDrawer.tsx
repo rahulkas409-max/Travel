@@ -1,5 +1,6 @@
 "use client";
 
+import { DESTINATION_BY_ID } from "@data/destinations";
 import type { Property, TravellerTag } from "@data/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { BadgeCheck, CalendarClock, Camera, Heart, MapPin, Phone } from "lucide-react";
@@ -11,6 +12,7 @@ import { ScoreBar, Stars } from "@/components/ui/Stars";
 import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
 import { cn, inrRange } from "@/lib/format";
+import { propertySource } from "@/lib/imageSources";
 import { NeighborhoodTag, SuitabilityPill } from "./NeighborhoodTag";
 import { ReviewProsCons } from "./ReviewProsCons";
 
@@ -70,10 +72,10 @@ export function ReviewDrawer({ property: p, onClose }: { property: Property | nu
               <button
                 key={k + i}
                 type="button"
-                onClick={() => openPhoto({ imageKey: k, label: p.name, seed: `${p.id}-${i}`, caption: `${p.kind} · room & property photo` })}
+                onClick={() => openPhoto({ source: propertySource(p, i, DESTINATION_BY_ID[p.destinationId]), label: p.name, caption: `${p.kind} · room & property photo` })}
                 className="relative w-[78%] shrink-0 snap-center overflow-hidden rounded-2xl sm:w-[60%]"
               >
-                <SmartImage imageKey={k} label={p.name} seed={`${p.id}-${i}`} width={900} className="aspect-[4/3] w-full" />
+                <SmartImage source={propertySource(p, i, DESTINATION_BY_ID[p.destinationId])} width={900} className="aspect-[4/3] w-full" />
                 <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
                   <Camera className="h-3 w-3" /> Save
                 </span>

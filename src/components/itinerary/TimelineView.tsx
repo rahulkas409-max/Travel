@@ -11,6 +11,8 @@ import { SmartImage } from "@/components/ui/SmartImage";
 import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
 import { zoneName } from "@/lib/destinations";
+import { destinationSource } from "@/lib/imageSources";
+import { WeatherCard } from "@/components/explore/WeatherCard";
 import { cn, dayDate } from "@/lib/format";
 import { PACE_META, analyseDay, transferWarnings } from "@/lib/itinerary";
 import { ActivitySwapModal, type SwapTarget } from "./ActivitySwapModal";
@@ -59,7 +61,7 @@ export function TimelineView() {
     <div className="space-y-6">
       {/* ───── Destination hero ───── */}
       <section className="relative overflow-hidden rounded-3xl shadow-card">
-        <SmartImage imageKey={dest.imageKey} label={dest.name} seed={dest.id} width={1600} priority className="h-64 w-full sm:h-80">
+        <SmartImage source={destinationSource(dest)} width={1600} priority className="h-64 w-full sm:h-80">
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/35 to-transparent" />
         </SmartImage>
         <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-7">
@@ -74,6 +76,12 @@ export function TimelineView() {
             {dest.name}
           </motion.h1>
           <p className="mt-1.5 max-w-xl text-sm text-white/85 sm:text-base">{dest.tagline}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <WeatherCard destinationId={dest.id} name={dest.name} compact />
+            <Link href={`/destinations/${dest.id}`} className="rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold backdrop-blur hover:bg-white/30">
+              Destination guide →
+            </Link>
+          </div>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {dest.tags.slice(0, 4).map((t) => (
               <span key={t} className="rounded-full border border-white/30 px-2.5 py-0.5 text-xs">
@@ -84,7 +92,7 @@ export function TimelineView() {
         </div>
         <button
           type="button"
-          onClick={() => openPhoto({ imageKey: dest.imageKey, label: dest.name, seed: dest.id, caption: dest.tagline })}
+          onClick={() => openPhoto({ source: destinationSource(dest), label: dest.name, caption: dest.tagline })}
           className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-2 text-xs font-semibold text-white backdrop-blur-md hover:bg-black/60"
         >
           <Download className="h-3.5 w-3.5" /> Wallpaper
@@ -193,6 +201,7 @@ export function TimelineView() {
                       index={i}
                       count={analysis.schedule.length}
                       zoneLabel={zoneName(dest, s.activity.zone)}
+                      dest={dest}
                       occasion={config.occasion}
                       warnings={analysis.warnings.filter((w) => w.itemUid === s.item.uid)}
                       highlighted={highlight === s.item.uid}

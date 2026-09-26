@@ -7,6 +7,8 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { useTrip } from "@/context/TripContext";
 import { cn, duration } from "@/lib/format";
 import { RentalEstimator } from "./RentalEstimator";
+import { LiveLinks } from "@/components/explore/LiveLinks";
+import { travelLinks } from "@/lib/links";
 
 const ICONS: Record<TransitOption["icon"], typeof Car> = {
   cab: Car,
@@ -41,6 +43,8 @@ export function TransitGuide() {
           <p className="font-semibold">{dest.gateway}</p>
         </div>
       </section>
+
+      <LiveLinks title="Book flights, trains & buses" note="Opens the official / major booking sites in a new tab." links={travelLinks(dest)} />
 
       <section>
         <h2 className="section-title mb-4 !text-xl">Ways to move</h2>
@@ -132,11 +136,11 @@ export function TransitGuide() {
         </h2>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {dest.emergency.map((e) => (
-            <a key={e.label + e.number} href={`tel:${e.number.replace(/[^0-9]/g, "")}`} className="glass flex items-center gap-3 p-3 transition hover:-translate-y-0.5">
+            <a key={e.label + e.number} href={`tel:${e.number.replace(/[^0-9]/g, "")}`} className="glass flex min-w-0 items-center gap-3 p-3 transition hover:-translate-y-0.5">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-500 text-white">
                 <Phone className="h-4 w-4" />
               </span>
-              <span className="min-w-0">
+              <span className="min-w-0 flex-1">
                 <span className="block text-lg font-bold leading-tight">{e.number}</span>
                 <span className="block text-xs font-semibold">{e.label}</span>
                 {e.note && <span className="muted block truncate text-[11px]">{e.note}</span>}

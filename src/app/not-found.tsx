@@ -7,7 +7,7 @@ export default function NotFound() {
       <h1 className="mt-4 font-display text-3xl font-semibold">Off the map</h1>
       <p className="muted mt-2">This trail doesn&apos;t exist — but plenty of others do.</p>
       <Link href="/" className="btn-primary mt-6">
-        Back to your itinerary
+        Back to home
       </Link>
     </div>
   );

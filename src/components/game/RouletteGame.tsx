@@ -13,6 +13,7 @@ import { SmartImage } from "@/components/ui/SmartImage";
 import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
 import { celebrate } from "@/lib/confetti";
+import { destinationSource } from "@/lib/imageSources";
 import { DestinationRoulette } from "./DestinationRoulette";
 import { RevealModal } from "./RevealModal";
 import { VibeQuiz } from "./VibeQuiz";
@@ -51,7 +52,7 @@ export function RouletteGame() {
     startTrip(destinationId, occ, 3, b);
     toast(`🧭 3-day ${DESTINATION_BY_ID[destinationId]?.name} plan ready!`, "success");
     setWinner(null);
-    router.push("/");
+    router.push("/itinerary");
   };
 
   return (
@@ -94,7 +95,7 @@ export function RouletteGame() {
                   .sort((a, b) => b.percent - a.percent)
                   .map((s) => (
                     <li key={s.destination.id} className="flex items-center gap-2 text-sm">
-                      <SmartImage imageKey={s.destination.imageKey} label={s.destination.name} seed={s.destination.id} width={120} className="h-8 w-8 shrink-0 rounded-lg" />
+                      <SmartImage source={destinationSource(s.destination)} width={120} className="h-8 w-8 shrink-0 rounded-lg" />
                       <span className="min-w-0 flex-1 truncate">{s.destination.name}</span>
                       <span className="text-xs font-bold tabular-nums text-sage-600 dark:text-sage-300">{s.percent}%</span>
                     </li>
@@ -124,7 +125,7 @@ export function RouletteGame() {
               if (!d) return null;
               return (
                 <button key={w.id} type="button" onClick={() => planIt(d.id, w.occasion)} className="glass w-44 shrink-0 overflow-hidden text-left transition hover:-translate-y-0.5">
-                  <SmartImage imageKey={d.imageKey} label={d.name} seed={d.id} width={360} className="h-24 w-full" />
+                  <SmartImage source={destinationSource(d)} width={360} className="h-24 w-full" />
                   <div className="p-2.5">
                     <p className="truncate text-sm font-semibold">{d.name}</p>
                     <p className="muted text-[11px]">
