@@ -14,6 +14,8 @@ import { usePhotoViewer } from "./ImageDownloadModal";
 import { PdfExportButton } from "./PdfExportButton";
 import { PrintDossier } from "./PrintDossier";
 import { WhatsAppExporter } from "./WhatsAppExporter";
+import { ProPanel } from "@/components/money/ProPanel";
+import { SupportCard } from "@/components/money/SupportCard";
 
 export function ExportHub() {
   const { destination: dest, plan, config, hydrated } = useTrip();
@@ -51,6 +53,9 @@ export function ExportHub() {
         </div>
         <WhatsAppExporter />
       </section>
+
+      <ProPanel />
+      <SupportCard />
 
       <PhotoGallery />
     </div>

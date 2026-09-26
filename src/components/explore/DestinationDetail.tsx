@@ -25,6 +25,7 @@ import { DestinationCard } from "./DestinationCard";
 import { LiveLinks } from "./LiveLinks";
 import { WeatherCard } from "./WeatherCard";
 import { WikiAbout } from "./WikiAbout";
+import { QuoteCta } from "@/components/money/QuoteCta";
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
@@ -186,6 +187,7 @@ export function DestinationDetail({ id }: { id: string }) {
             </button>
             <p className="muted text-center text-xs">Free · no login · editable day-by-day</p>
           </div>
+          <QuoteCta className="mt-3" source="destination-page" destinationId={d.id} />
         </aside>
       </section>
 

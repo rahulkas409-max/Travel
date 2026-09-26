@@ -5,6 +5,7 @@ import { TIER_LABEL } from "@data/regions";
 import type { Property } from "@data/types";
 import { forwardRef, type CSSProperties, type ReactNode } from "react";
 import { useTrip } from "@/context/TripContext";
+import { usePro } from "@/lib/pro";
 import { farmsFor, foodFor, getProperty, staysFor, type ResolvedDestination } from "@/lib/destinations";
 import { clock, dayDate, duration, inr, inrRange } from "@/lib/format";
 import { PACE_META, SLOT_META, analyseDay, transferWarnings, type DayAnalysis, type PlanDay, type TripConfig } from "@/lib/itinerary";
@@ -90,14 +91,23 @@ export const PrintDossier = forwardRef<HTMLDivElement, { preview?: boolean }>(fu
   const food = foodFor(dest);
   const transfers = transferWarnings(dest, plan);
   const activityCost = analyses.reduce((s, x) => s + x.a.cost, 0);
-  const total = 2 + dayPages.length + 1;
+  const { isPro, branding, costs } = usePro();
+  const ROSTER_ROWS = 24;
+  const rosterPages = isPro && branding.includeRoster ? Math.min(4, Math.ceil(Math.max(1, cfg.travellers) / ROSTER_ROWS)) : 0;
+  const costPage = isPro && branding.includeCosts ? 1 : 0;
+  const basePages = 2 + dayPages.length + 1;
+  const total = basePages + rosterPages + costPage;
   const endDate = dayDate(cfg.startDate, cfg.days - 1);
 
+  const brand = isPro && branding.hideRoamIndia ? branding.orgName || "Trip dossier" : "RoamIndia";
   const footer = `${dest.name} · ${occ.label}`;
+  const nights = Math.max(1, cfg.days - 1);
+  const people = Math.max(1, cfg.travellers);
+  const perPerson = (costs.stayPerNight * nights + costs.transportTotal + costs.extrasTotal) / people + costs.foodPerPersonPerDay * cfg.days + costs.activitiesPerPerson;
   return (
     <div ref={ref} id={preview ? undefined : DOSSIER_ID}>
       {/* ───────── Page 1 — Cover & overview ───────── */}
-      <Page n={1} total={total} footer={footer}>
+      <Page n={1} total={total} footer={footer} brand={brand}>
         <div
           style={{
             margin: "-48px -52px 0",
@@ -106,6 +116,19 @@ export const PrintDossier = forwardRef<HTMLDivElement, { preview?: boolean }>(fu
             color: "#fff",
           }}
         >
+          {isPro && (branding.orgName || branding.logo) && (
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18, background: "rgba(255,255,255,0.95)", color: C.ink, borderRadius: 14, padding: "8px 14px", width: "fit-content" }}>
+              {branding.logo && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={branding.logo} alt="" style={{ height: 38, maxWidth: 120, objectFit: "contain" }} />
+              )}
+              <div>
+                <div style={{ fontSize: 9, letterSpacing: 2, fontWeight: 800, color: C.soft }}>PREPARED FOR</div>
+                <div style={{ fontSize: 15, fontWeight: 800 }}>{branding.orgName || "Your group"}</div>
+                {branding.preparedBy && <div style={{ fontSize: 10.5, color: C.soft }}>by {branding.preparedBy}</div>}
+              </div>
+            </div>
+          )}
           <div style={{ fontSize: 11, letterSpacing: 3, fontWeight: 700, opacity: 0.9 }}>TRAVEL DOSSIER · {dest.regionName.toUpperCase()}</div>
           <div style={{ fontFamily: serif, fontSize: 46, fontWeight: 700, lineHeight: 1.05, marginTop: 10 }}>{dest.name}</div>
           {dest.aka && <div style={{ fontSize: 14, marginTop: 6, opacity: 0.95 }}>{dest.aka}</div>}
@@ -189,7 +212,7 @@ export const PrintDossier = forwardRef<HTMLDivElement, { preview?: boolean }>(fu
 
       {/* ───────── Itinerary pages ───────── */}
       {dayPages.map((chunk, ci) => (
-        <Page key={ci} n={2 + ci} total={total} footer={footer}>
+        <Page key={ci} n={2 + ci} total={total} footer={footer} brand={brand}>
           <PageTitle eyebrow="Day-by-day itinerary" title={ci === 0 ? "Your schedule" : "Schedule (continued)"} />
           {chunk.map(({ day, a }) => {
             const idx = day.day - 1;
@@ -246,7 +269,7 @@ export const PrintDossier = forwardRef<HTMLDivElement, { preview?: boolean }>(fu
       ))}
 
       {/* ───────── Stays + transit cheat sheet ───────── */}
-      <Page n={total - 1} total={total} footer={footer}>
+      <Page n={total - 1} total={total} footer={footer} brand={brand}>
         <PageTitle eyebrow="Where you'll sleep" title={stays.length ? "Stays & contacts" : "Stays"} />
         {stays.length === 0 && <p style={{ fontSize: 12, color: C.soft }}>Shortlist stays in the app to print their addresses here.</p>}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -312,7 +335,7 @@ export const PrintDossier = forwardRef<HTMLDivElement, { preview?: boolean }>(fu
       </Page>
 
       {/* ───────── Safety, food & essentials ───────── */}
-      <Page n={total} total={total} footer={footer}>
+      <Page n={total} total={total} footer={footer} brand={brand}>
         <PageTitle eyebrow="Keep this handy" title="Emergency & essentials" />
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
           {dest.emergency.map((e) => (
@@ -355,14 +378,93 @@ export const PrintDossier = forwardRef<HTMLDivElement, { preview?: boolean }>(fu
         </div>
 
         <div style={{ marginTop: 22, padding: "12px 14px", borderRadius: 12, background: C.sand, fontSize: 11, color: C.soft, lineHeight: 1.6 }}>
-          Generated free with RoamIndia — no login, no paywall. Timings, prices and permits change; confirm with operators before you travel. Save this PDF offline — mountain and island stretches often have no signal.
+          {isPro && branding.hideRoamIndia ? `Prepared by ${branding.preparedBy || branding.orgName || "the trip organiser"}.` : "Generated free with RoamIndia — no login, no paywall."} Timings, prices and permits change; confirm with operators before you travel. Save this PDF offline — mountain and island stretches often have no signal.
         </div>
       </Page>
+
+      {/* ───────── Pro: group roster ───────── */}
+      {Array.from({ length: rosterPages }, (_, pi) => (
+        <Page key={`roster-${pi}`} n={basePages + 1 + pi} total={total} footer={footer} brand={brand}>
+          <PageTitle eyebrow="Organiser" title={pi === 0 ? "Group roster & emergency contacts" : "Group roster (continued)"} />
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 10.5 }}>
+            <thead>
+              <tr style={{ background: C.sand2, textAlign: "left" }}>
+                {["#", "Name", "Phone", "Room", "Emergency contact", "Medical / diet", "Consent"].map((h) => (
+                  <Th key={h}>{h}</Th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: Math.min(ROSTER_ROWS, people - pi * ROSTER_ROWS) }, (_, r) => (
+                <tr key={r} style={{ borderBottom: `1px solid ${C.line}`, height: 32 }}>
+                  <Td bold>{pi * ROSTER_ROWS + r + 1}</Td>
+                  <Td> </Td>
+                  <Td> </Td>
+                  <Td> </Td>
+                  <Td> </Td>
+                  <Td> </Td>
+                  <Td>☐</Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {pi === rosterPages - 1 && cfg.occasion === "school" && (
+            <div style={{ marginTop: 18, border: `1px dashed ${C.faint}`, borderRadius: 10, padding: "12px 14px", fontSize: 11, lineHeight: 1.7 }}>
+              <b>Parent / guardian consent</b> — I allow my ward ____________________ (Class ____) to join the trip to {dest.name}
+              {cfg.startDate ? ` from ${dayDate(cfg.startDate, 0)} to ${endDate}` : ""}. Medical conditions / allergies: ______________________________
+              <br />
+              Parent name & signature: ______________________________ Phone: ____________________ Date: __________
+            </div>
+          )}
+        </Page>
+      ))}
+
+      {/* ───────── Pro: cost split ───────── */}
+      {costPage === 1 && (
+        <Page n={total} total={total} footer={footer} brand={brand}>
+          <PageTitle eyebrow="Organiser" title="Cost split per person" />
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+            <thead>
+              <tr style={{ background: C.sand2, textAlign: "left" }}>
+                <Th>Item</Th>
+                <Th>Basis</Th>
+                <Th>Group total</Th>
+                <Th>Per person</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ["Stay", `${inr(costs.stayPerNight)} × ${nights} nights`, costs.stayPerNight * nights],
+                ["Transport", "Whole group", costs.transportTotal],
+                ["Food", `${inr(costs.foodPerPersonPerDay)} × ${cfg.days} days × ${people}`, costs.foodPerPersonPerDay * cfg.days * people],
+                ["Tickets & activities", `${inr(costs.activitiesPerPerson)} × ${people}`, costs.activitiesPerPerson * people],
+                ["Extras", "Whole group", costs.extrasTotal],
+              ].map(([k, basis, tot]) => (
+                <tr key={k as string} style={{ borderBottom: `1px solid ${C.line}` }}>
+                  <Td bold>{k}</Td>
+                  <Td muted>{basis}</Td>
+                  <Td>{inr(tot as number)}</Td>
+                  <Td>{inr((tot as number) / people)}</Td>
+                </tr>
+              ))}
+              <tr style={{ background: C.sand }}>
+                <Td bold>Total</Td>
+                <Td muted>{people} people</Td>
+                <Td bold>{inr(perPerson * people)}</Td>
+                <Td bold>{inr(perPerson)}</Td>
+              </tr>
+            </tbody>
+          </table>
+          <p style={{ fontSize: 11, color: C.soft, marginTop: 14, lineHeight: 1.6 }}>
+            Collect {inr(Math.ceil(perPerson / 10) * 10)} per person. Estimates entered by the organiser — actual bills may vary slightly with taxes and on-ground changes.
+          </p>
+        </Page>
+      )}
     </div>
   );
 });
 
-function Page({ children, n, total, footer }: { children: ReactNode; n: number; total: number; footer: string }) {
+function Page({ children, n, total, footer, brand = "RoamIndia" }: { children: ReactNode; n: number; total: number; footer: string; brand?: string }) {
   return (
     <section data-a4-page style={PAGE}>
       {children}
@@ -381,7 +483,7 @@ function Page({ children, n, total, footer }: { children: ReactNode; n: number; 
         }}
       >
         <span>
-          <b style={{ color: C.rose }}>RoamIndia</b> · {footer}
+          <b style={{ color: C.rose }}>{brand}</b> · {footer}
         </span>
         <span>
           Page {n} / {total}

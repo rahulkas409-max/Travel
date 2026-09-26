@@ -13,6 +13,7 @@ import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
 import { cn, inrRange } from "@/lib/format";
 import { propertySource } from "@/lib/imageSources";
+import { useEnquiry } from "@/components/money/EnquiryModal";
 import { NeighborhoodTag, SuitabilityPill } from "./NeighborhoodTag";
 import { ReviewProsCons } from "./ReviewProsCons";
 
@@ -31,6 +32,7 @@ const TAG_EMOJI: Partial<Record<TravellerTag, string>> = {
 /** Deep review drawer: score breakdown, pros/cons, rooms, contacts & verified reviews. */
 export function ReviewDrawer({ property: p, onClose }: { property: Property | null; onClose: () => void }) {
   const { savedStays, toggleSavedStay } = useTrip();
+  const { openEnquiry } = useEnquiry();
   const { openPhoto } = usePhotoViewer();
   const [tagFilter, setTagFilter] = useState<TravellerTag | "all">("all");
 
@@ -51,16 +53,21 @@ export function ReviewDrawer({ property: p, onClose }: { property: Property | nu
       subtitle={p ? `${p.kind} · ${p.neighbourhood}` : undefined}
       footer={
         p && (
-          <button
-            type="button"
-            onClick={() => {
-              sound.play(saved ? "tick" : "chime");
-              toggleSavedStay(p.id);
-            }}
-            className={cn("w-full", saved ? "btn-ghost" : "btn-primary")}
-          >
-            <Heart className={cn("h-4 w-4", saved && "fill-rose-500 text-rose-500")} /> {saved ? "Saved to shortlist" : "Save to my shortlist"}
-          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                sound.play(saved ? "tick" : "chime");
+                toggleSavedStay(p.id);
+              }}
+              className="btn-ghost"
+            >
+              <Heart className={cn("h-4 w-4", saved && "fill-rose-500 text-rose-500")} /> {saved ? "Saved" : "Save"}
+            </button>
+            <button type="button" onClick={() => openEnquiry({ type: "property", propertyId: p.id, source: "review-drawer" })} className="btn-primary">
+              Check availability
+            </button>
+          </div>
         )
       }
     >
@@ -200,10 +207,12 @@ export function ReviewDrawer({ property: p, onClose }: { property: Property | nu
                           <span className="pill bg-marigold-100 !normal-case !tracking-normal text-marigold-700 dark:bg-marigold-500/15 dark:text-marigold-300">
                             {TAG_EMOJI[r.tag]} {r.tag}
                           </span>
-                          {r.verified && (
+                          {r.verified ? (
                             <span className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-sage-600 dark:text-sage-300">
                               <BadgeCheck className="h-3.5 w-3.5" /> Verified stay
                             </span>
+                          ) : (
+                            <span className="rounded-full bg-black/5 px-1.5 py-0.5 text-[10px] font-semibold opacity-70 dark:bg-white/10">Sample review</span>
                           )}
                         </div>
                       </div>

@@ -42,7 +42,12 @@ export function StayCard({ p, onOpen, variant = "stay", children }: Props) {
       <div className="relative">
         <SmartImage source={propertySource(p, photo, DESTINATION_BY_ID[p.destinationId])} width={800} className="aspect-[16/10] w-full" />
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
-          <span className="pill bg-white/90 text-slate-900 shadow backdrop-blur">{p.kind}</span>
+          <span className="flex flex-col items-start gap-1">
+            <span className="pill bg-white/90 text-slate-900 shadow backdrop-blur">{p.kind}</span>
+            {p.sponsored && (
+              <span className="pill bg-marigold-500 text-white shadow">{p.sponsored === "featured" ? "★ Featured · Sponsored" : "✓ Verified host · Sponsored"}</span>
+            )}
+          </span>
           <motion.button
             type="button"
             whileTap={{ scale: 0.8 }}

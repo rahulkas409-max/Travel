@@ -209,6 +209,8 @@ export interface Property {
   rooms: RoomOption[];
   imageKeys: string[];
   reviews: Review[];
+  /** Paid placement tier — always shown with a visible "Sponsored" label. */
+  sponsored?: "verified" | "featured";
 }
 
 /* ─────────────────────────── Food ─────────────────────────── */

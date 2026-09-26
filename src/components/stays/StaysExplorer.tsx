@@ -5,6 +5,7 @@ import { OCCASION_BY_ID } from "@data/occasions";
 import type { Property, SuitabilityBadge } from "@data/types";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { ArrowDownUp, Heart } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { LiveLinks } from "@/components/explore/LiveLinks";
@@ -71,8 +72,10 @@ export function StaysExplorer() {
       .filter((p) => tab === "saved" || !matchOccasion || p.occasions.includes(config.occasion))
       .filter((p) => !budgetOnly || fitsBudget(p, config.budget, config.travellers));
     const fit = (x: Property) => Number(x.occasions.includes(config.occasion));
+    const featured = (x: Property) => Number(x.sponsored === "featured");
     return [...filtered].sort(
       (a, b) =>
+        featured(b) - featured(a) ||
         fit(b) - fit(a) ||
         (sort === "rating" ? b.rating - a.rating || b.reviewCount - a.reviewCount : sort === "price" ? a.priceRange[0] - b.priceRange[0] : b.wifiMbps - a.wifiMbps),
     );
@@ -244,6 +247,15 @@ export function StaysExplorer() {
           </motion.div>
         </>
       )}
+
+      <Link href="/partner" className="glass mt-8 flex items-center gap-4 p-4 transition hover:-translate-y-0.5">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sage-400 to-sage-600 text-2xl">🏡</span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-bold">Own a farmhouse, homestay or resort?</span>
+          <span className="muted block text-sm">List free · 0% commission on direct bookings · group enquiries from offsites & schools</span>
+        </span>
+        <span className="btn-primary shrink-0 !min-h-[40px] !text-xs">List free →</span>
+      </Link>
 
       {tab === "saved" && savedStays.length > 0 && (
         <p className="muted mt-4 flex items-center gap-1.5 text-xs">

@@ -20,6 +20,7 @@ import { PACE_META, analyseDay, transferWarnings } from "@/lib/itinerary";
 import { ActivitySwapModal, type SwapTarget } from "./ActivitySwapModal";
 import { PacingWarning, loadLabel } from "./PacingWarning";
 import { SlotCard } from "./SlotCard";
+import { QuoteCta } from "@/components/money/QuoteCta";
 import { TransitBuffer } from "./TransitBuffer";
 
 export function TimelineView() {
@@ -240,6 +241,7 @@ export function TimelineView() {
         {/* ───── Sidebar ───── */}
         <aside className="space-y-4 lg:sticky lg:top-44 lg:self-start">
           <PacingWarning analysis={analysis} extra={dayTransfer} onFocusItem={focusItem} />
+          <QuoteCta source="itinerary-sidebar" destinationId={dest.id} />
           <div className="glass p-4">
             <p className="flex items-center gap-2 text-sm font-semibold">
               <Sparkles className="h-4 w-4 text-marigold-500" /> Tuned for {occ.short}

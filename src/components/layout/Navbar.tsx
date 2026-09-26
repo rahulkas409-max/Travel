@@ -37,6 +37,12 @@ export const NAV_ITEMS = [
 ] as const;
 
 const BOTTOM = ["/", "/itinerary", "/stays", "/roulette"];
+
+const BUSINESS_LINKS = [
+  { href: "/pricing", label: "Pricing", blurb: "Free for travellers" },
+  { href: "/partner", label: "List your property", blurb: "Farmhouses & homestays" },
+  { href: "/pro", label: "Organiser Pro", blurb: "Schools, HR & agents" },
+];
 const spring = { type: "spring", stiffness: 480, damping: 38 } as const;
 
 function isActive(pathname: string, href: string) {
@@ -194,7 +200,15 @@ export function Navbar() {
             );
           })}
         </div>
-        <div className="mt-4 flex items-center justify-between rounded-2xl border border-[var(--line)] p-3">
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          {BUSINESS_LINKS.map((l) => (
+            <Link key={l.href} href={l.href} className="rounded-2xl border border-[var(--line)] p-3 text-center transition hover:bg-white/60 dark:hover:bg-white/5">
+              <span className="block text-xs font-bold">{l.label}</span>
+              <span className="muted block text-[10px]">{l.blurb}</span>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-3 flex items-center justify-between rounded-2xl border border-[var(--line)] p-3">
           <span className="text-sm font-semibold">Sound & theme</span>
           <div className="flex gap-2">{toggles}</div>
         </div>
