@@ -21,8 +21,11 @@ export function WeatherCard({ destinationId, name, compact = false, className }:
     };
   }, [g]);
 
+  // The compact hero chip simply stays hidden while loading or when offline.
+  if (compact && !data) return null;
+
   if (data === undefined)
-    return <div className={cn("glass shimmer", compact ? "h-16" : "h-44", className)} aria-label="Loading weather" />;
+    return <div className={cn("glass shimmer h-44", className)} aria-label="Loading weather" />;
 
   if (!data)
     return (
