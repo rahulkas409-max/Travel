@@ -2,6 +2,8 @@ import { ArrowUpRight } from "lucide-react";
 import type { ReactNode } from "react";
 import type { OutLink } from "@/lib/links";
 import { cn } from "@/lib/format";
+import { AFFILIATE_NOTE } from "@/lib/affiliate";
+import Link from "next/link";
 
 /** Row of outbound "live availability" tiles (opens the provider's own search). */
 export function LiveLinks({ links, title, note, className, children }: { links: OutLink[]; title: string; note?: string; className?: string; children?: ReactNode }) {
@@ -16,7 +18,7 @@ export function LiveLinks({ links, title, note, className, children }: { links: 
             key={l.id}
             href={l.href}
             target="_blank"
-            rel="noopener noreferrer nofollow"
+            rel="noopener noreferrer sponsored"
             className={cn("group relative min-w-0 overflow-hidden rounded-2xl bg-gradient-to-br p-3 text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg", l.tone)}
           >
             <ArrowUpRight className="absolute right-2 top-2 h-4 w-4 opacity-70 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -25,6 +27,12 @@ export function LiveLinks({ links, title, note, className, children }: { links: 
           </a>
         ))}
       </div>
+      <p className="muted mt-2 text-[10.5px]">
+        {AFFILIATE_NOTE}{" "}
+        <Link href="/disclosure" className="underline">
+          Learn more
+        </Link>
+      </p>
     </div>
   );
 }

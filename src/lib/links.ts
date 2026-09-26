@@ -6,6 +6,7 @@
 
 import { GEO } from "@data/geo";
 import type { Destination } from "@data/types";
+import { AFFILIATE } from "@/config/business";
 
 export interface OutLink {
   id: string;
@@ -46,7 +47,7 @@ export function stayLinks(d: Destination, opts: { startDate?: string; nights: nu
       id: "booking",
       label: "Booking.com",
       sub: `${guests} guests · ${opts.nights} nights`,
-      href: `https://www.booking.com/searchresults.html?ss=${enc(q)}&checkin=${checkin}&checkout=${checkout}&group_adults=${guests}&no_rooms=${rooms}&group_children=0`,
+      href: `https://www.booking.com/searchresults.html?ss=${enc(q)}&checkin=${checkin}&checkout=${checkout}&group_adults=${guests}&no_rooms=${rooms}&group_children=0${AFFILIATE.bookingAid ? `&aid=${enc(AFFILIATE.bookingAid)}` : ""}`,
       tone: "from-sky-600 to-blue-800",
     },
     {

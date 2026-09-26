@@ -89,6 +89,12 @@
   .icon-btn {
     @apply inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-white/60 text-[var(--ink)] transition hover:bg-white active:scale-95 dark:bg-white/5 dark:hover:bg-white/10;
   }
+  .input {
+    @apply h-11 w-full rounded-xl border border-[var(--line)] bg-white/80 px-3 text-base outline-none ring-marigold-500/40 transition focus:ring-4 dark:bg-white/5;
+  }
+  textarea.input {
+    @apply h-auto py-2;
+  }
   .section-title {
     @apply font-display text-2xl font-semibold sm:text-3xl;
   }

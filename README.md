@@ -70,3 +70,34 @@ All three are CORS-enabled and free. Responses are cached in LocalStorage, and a
 - **Images.** Photos come from the Unsplash CDN and are chosen by theme keyword. If a photo can't load (offline, blocked or removed), a canvas-drawn postcard replaces it, so cards never show a broken image and downloads still save a real PNG. On iPhone and iPad, *Save to Photos* opens the native share sheet, where you tap "Save Image". Everywhere else, the download uses a blob URL with the `download` attribute.
 - **PDF.** The PDF is built from fixed 794×1123 px (A4 @ 96 dpi) pages. They are captured at 2.5× (2× on iOS to stay under Safari's canvas memory limit) and placed full-bleed. Days are paginated by estimated row height, so a page never overflows.
 - **Seed data.** Property names, masked phone numbers and reviews are illustrative samples. Well-known eateries are real, but their hours change. Swap in live listings before using this for real bookings.
+
+## 💰 Start earning (setup checklist)
+
+Everything is free for travellers. Revenue comes from partners and organisers, all configured with **Vercel → Project → Settings → Environment Variables** (see `.env.example`). Nothing breaks if a value is missing.
+
+| Stream | Price | What to set |
+| --- | --- | --- |
+| Group & property enquiries (offsites, schools) | ₹149 per verified enquiry, or 3% on confirmed bookings (charged to the property) | `ENQUIRY_WEBHOOK_URL` (Google Sheet / Zapier / Slack) and/or `SUPABASE_URL` + `SUPABASE_SERVICE_KEY`, plus `NEXT_PUBLIC_CONTACT_WHATSAPP` |
+| Affiliate booking & ticket links | Partner commission; the traveller pays the same | `NEXT_PUBLIC_BOOKING_AID`, `NEXT_PUBLIC_GYG_PARTNER_ID`, `NEXT_PUBLIC_KLOOK_AID` |
+| Property listings | Free · Verified ₹499/mo · Featured ₹999/mo (always labelled Sponsored) | Payment settings below. Set `sponsored: "verified" \| "featured"` on a property in `data/` |
+| Organiser Pro (branded PDF, roster, cost split) | ₹149/trip · ₹999/year | `PRO_SECRET`, `ADMIN_PASSWORD`; issue codes at `/admin` after payment |
+| Optional "buy us a chai" | ₹49 | Payment settings below |
+
+**Payments.** Set `NEXT_PUBLIC_UPI_ID` to accept UPI with 0% fees. It works as a deep link on phones and a QR code on desktop. You can also add Razorpay Payment Links (`NEXT_PUBLIC_RZP_LINK_*`) for cards and netbanking. After someone pays, they send the reference on WhatsApp. You then activate their listing, or issue a Pro code in `/admin` and send it with one tap.
+
+**Pages:**
+- `/pricing` – plans and comparison
+- `/partner` – host signup
+- `/pro` – buy or unlock Pro
+- `/admin` – setup checklist and Pro codes
+- `/privacy`, `/terms`, `/disclosure` – legal pages
+
+**Supabase table (optional):**
+
+```sql
+create table enquiries (id text primary key, type text, created_at timestamptz, payload jsonb);
+```
+
+**Google Sheets webhook (optional).** In Apps Script, write a `doPost(e)` that appends `JSON.parse(e.postData.contents)` to a sheet. Deploy it as a web app and paste the URL into `ENQUIRY_WEBHOOK_URL`.
+
+> Before charging anyone, replace the illustrative sample stays and reviews with real, verified listings. Seed reviews are labelled "Sample review" in the UI. Have the template legal pages reviewed.

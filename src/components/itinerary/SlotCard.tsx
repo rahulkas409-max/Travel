@@ -10,6 +10,7 @@ import { SmartImage } from "@/components/ui/SmartImage";
 import { sound } from "@/lib/audio";
 import { cn, clock, duration, inr } from "@/lib/format";
 import { activitySource } from "@/lib/imageSources";
+import { BookTickets } from "@/components/money/BookTickets";
 import { SLOT_META, type PacingWarning, type ScheduledItem } from "@/lib/itinerary";
 
 const SLOT_TONE = {
@@ -136,6 +137,8 @@ export function SlotCard({ s, index, count, zoneLabel, dest, occasion, warnings,
                 {a.tip}
               </span>
             </button>
+
+            <BookTickets a={a} d={dest} />
 
             <div className="mt-3 flex items-center gap-1.5 border-t border-[var(--line)] pt-3">
               <button type="button" onClick={onSwap} className="btn-ghost !min-h-[38px] !rounded-full !px-3 !text-xs">

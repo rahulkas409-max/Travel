@@ -13,6 +13,9 @@ export const STORAGE_KEYS = {
   muted: "muted",
   theme: "theme",
   savedTrips: "saved-trips",
+  pro: "pro",
+  proBranding: "pro-branding",
+  proCosts: "pro-costs",
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

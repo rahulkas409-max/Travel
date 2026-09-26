@@ -9,7 +9,7 @@ export function R(
   date: string,
   title: string,
   body: string,
-  verified = true,
+  verified = false,
 ): Omit<Review, "id"> {
   return { author, from, tag, rating, date, title, body, verified };
 }
