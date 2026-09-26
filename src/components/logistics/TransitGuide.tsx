@@ -9,6 +9,7 @@ import { cn, duration } from "@/lib/format";
 import { RentalEstimator } from "./RentalEstimator";
 import { LiveLinks } from "@/components/explore/LiveLinks";
 import { travelLinks } from "@/lib/links";
+import { DateRange } from "@/components/ui/DateRange";
 
 const ICONS: Record<TransitOption["icon"], typeof Car> = {
   cab: Car,
@@ -25,12 +26,12 @@ const ICONS: Record<TransitOption["icon"], typeof Car> = {
 };
 
 export function TransitGuide() {
-  const { destination: dest } = useTrip();
+  const { destination: dest, config, setStartDate, setDays } = useTrip();
   const links = dest.zoneLinks;
 
   return (
     <div className="space-y-10">
-      <PageHeader eyebrow="Transit & Logistics" title={<>Getting around {dest.name}</>}>
+      <PageHeader eyebrow="Transit & Logistics" title={<>Getting around {dest.name}</>} destination>
         Cabs, buses, scooty rentals and train hacks — plus the transit-friction map our pacing meter uses and the scams locals warn about.
       </PageHeader>
 
@@ -44,7 +45,18 @@ export function TransitGuide() {
         </div>
       </section>
 
-      <LiveLinks title="Book flights, trains & buses" note="Opens the official / major booking sites in a new tab." links={travelLinks(dest)} />
+      <LiveLinks title="Book flights, trains & buses" note="Opens the official / major booking sites in a new tab." links={travelLinks(dest, config.startDate, config.days)}>
+        <DateRange
+          variant="pill"
+          labels={["Departure", "Return"]}
+          start={config.startDate}
+          length={config.days}
+          onChange={(st, len) => {
+            if (st !== config.startDate) setStartDate(st);
+            if (len !== config.days) setDays(len);
+          }}
+        />
+      </LiveLinks>
 
       <section>
         <h2 className="section-title mb-4 !text-xl">Ways to move</h2>

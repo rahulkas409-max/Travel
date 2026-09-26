@@ -1,13 +1,15 @@
 import { ArrowUpRight } from "lucide-react";
+import type { ReactNode } from "react";
 import type { OutLink } from "@/lib/links";
 import { cn } from "@/lib/format";
 
 /** Row of outbound "live availability" tiles (opens the provider's own search). */
-export function LiveLinks({ links, title, note, className }: { links: OutLink[]; title: string; note?: string; className?: string }) {
+export function LiveLinks({ links, title, note, className, children }: { links: OutLink[]; title: string; note?: string; className?: string; children?: ReactNode }) {
   return (
     <div className={cn("glass p-4", className)}>
       <p className="text-sm font-bold">{title}</p>
       {note && <p className="muted mt-0.5 text-xs">{note}</p>}
+      {children && <div className="mt-3">{children}</div>}
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         {links.map((l) => (
           <a

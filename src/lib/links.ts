@@ -80,12 +80,14 @@ export function stayLinks(d: Destination, opts: { startDate?: string; nights: nu
   ];
 }
 
-export function travelLinks(d: Destination): OutLink[] {
+export function travelLinks(d: Destination, startDate?: string, days = 3): OutLink[] {
   const q = searchName(d);
+  const dep = startDate || defaultStart();
+  const ret = addDays(dep, Math.max(0, days - 1));
   const enc = encodeURIComponent;
   const g = GEO[d.id];
   return [
-    { id: "flights", label: "Google Flights", sub: `Flights to ${d.gateway.split("·")[0].split("(")[0].trim()}`, href: `https://www.google.com/travel/flights?q=${enc(`flights to ${q}`)}`, tone: "from-sky-500 to-indigo-600" },
+    { id: "flights", label: "Google Flights", sub: `Flights to ${d.gateway.split("·")[0].split("(")[0].trim()}`, href: `https://www.google.com/travel/flights?q=${enc(`flights to ${q} on ${dep} returning ${ret}`)}`, tone: "from-sky-500 to-indigo-600" },
     { id: "irctc", label: "IRCTC", sub: "Book trains", href: "https://www.irctc.co.in/nget/train-search", tone: "from-blue-700 to-slate-800" },
     { id: "redbus", label: "redBus", sub: "Buses & sleepers", href: "https://www.redbus.in/", tone: "from-red-500 to-rose-700" },
     {

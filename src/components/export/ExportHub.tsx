@@ -22,7 +22,7 @@ export function ExportHub() {
 
   return (
     <div className="space-y-10">
-      <PageHeader eyebrow="Export & Share" title="Take your trip offline">
+      <PageHeader eyebrow="Export & Share" title="Take your trip offline" destination>
         A print-ready A4 dossier (schedule, stay contacts, transit cheat sheet, emergency numbers), a WhatsApp-formatted plan, and high-res photos for your
         phone wallpaper.
       </PageHeader>

@@ -2,12 +2,14 @@
 
 import { OCCASION_BY_ID } from "@data/occasions";
 import { AnimatePresence, LayoutGroup, motion, Reorder } from "framer-motion";
-import { BedDouble, CalendarDays, ChevronLeft, ChevronRight, Download, Mountain, Plus, RefreshCw, Sparkles, UtensilsCrossed } from "lucide-react";
+import { BedDouble, ChevronLeft, ChevronRight, Download, Mountain, Plus, RefreshCw, Sparkles, UtensilsCrossed } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePhotoViewer } from "@/components/export/ImageDownloadModal";
 import { TierBadge } from "@/components/layout/DestinationSelector";
 import { SmartImage } from "@/components/ui/SmartImage";
+import { DateRange } from "@/components/ui/DateRange";
+import { DestinationChip } from "@/components/ui/DestinationChip";
 import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
 import { zoneName } from "@/lib/destinations";
@@ -21,7 +23,7 @@ import { SlotCard } from "./SlotCard";
 import { TransitBuffer } from "./TransitBuffer";
 
 export function TimelineView() {
-  const { destination: dest, plan, config, hydrated, setDayItems, moveItem, removeItem, regenerate, setStartDate, toast } = useTrip();
+  const { destination: dest, plan, config, hydrated, setDayItems, moveItem, removeItem, regenerate, setStartDate, setDays, toast } = useTrip();
   const { openPhoto } = usePhotoViewer();
   const [dayIdx, setDayIdx] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -77,6 +79,7 @@ export function TimelineView() {
           </motion.h1>
           <p className="mt-1.5 max-w-xl text-sm text-white/85 sm:text-base">{dest.tagline}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
+            <DestinationChip light />
             <WeatherCard destinationId={dest.id} name={dest.name} compact />
             <Link href={`/destinations/${dest.id}`} className="rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold backdrop-blur hover:bg-white/30">
               Destination guide →
@@ -106,20 +109,18 @@ export function TimelineView() {
             {occ.emoji} {occ.label} · {PACE_META[config.pace].label} pace
           </p>
           <h2 className="section-title mt-1">Your {config.days}-day plan</h2>
-          <p className="muted mt-1 text-sm">{occ.tagline}. Drag cards (⋮⋮) or use the arrows to reorder — times & transit update live.</p>
+          <p className="muted mt-1 text-sm">{occ.tagline}. Drag ⋮⋮ or use the arrows to reorder — times update automatically.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <label className="btn-ghost relative cursor-pointer !px-3">
-            <CalendarDays className="h-4 w-4" />
-            <span className="text-sm">{config.startDate ? dayDate(config.startDate, 0) : "Set dates"}</span>
-            <input
-              type="date"
-              value={config.startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="absolute inset-0 cursor-pointer opacity-0"
-              aria-label="Trip start date"
-            />
-          </label>
+          <DateRange
+            variant="pill"
+            start={config.startDate}
+            length={config.days}
+            onChange={(st, len) => {
+              if (st !== config.startDate) setStartDate(st);
+              if (len !== config.days) setDays(len);
+            }}
+          />
           <button
             type="button"
             className="btn-ghost !px-3"

@@ -39,6 +39,7 @@ export function FoodRadar() {
     <div>
       <PageHeader
         eyebrow="Local Food & Radar"
+        destination
         title={<>What to eat in {dest.name}</>}
         actions={
           <button

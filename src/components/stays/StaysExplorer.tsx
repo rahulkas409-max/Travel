@@ -8,6 +8,7 @@ import { ArrowDownUp, Heart } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { LiveLinks } from "@/components/explore/LiveLinks";
+import { DateRange } from "@/components/ui/DateRange";
 import { stayLinks } from "@/lib/links";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useTrip } from "@/context/TripContext";
@@ -34,7 +35,8 @@ const BADGES: { id: SuitabilityBadge | "all"; label: string }[] = [
 const spring = { type: "spring", stiffness: 460, damping: 36 } as const;
 
 export function StaysExplorer() {
-  const { destination: dest, config, savedStays } = useTrip();
+  const { destination: dest, config, savedStays, setStartDate, setDays } = useTrip();
+  const nights = Math.max(1, config.days - 1);
   const [tab, setTab] = useState<Tab>(dest.farmhouseHub ? "farm" : "stay");
   const [scope, setScope] = useState<Scope>("destination");
   const [badge, setBadge] = useState<SuitabilityBadge | "all">("all");
@@ -81,7 +83,7 @@ export function StaysExplorer() {
 
   return (
     <div>
-      <PageHeader eyebrow="Farmhouses & Stays" title={<>Where to stay in {dest.name}</>}>
+      <PageHeader eyebrow="Farmhouses & Stays" title={<>Where to stay in {dest.name}</>} destination>
         Agro-farms, plantation bungalows, pool villas, heritage havelis and social hostels — with cleanliness, food, pool & Wi-Fi scores and traveller
         reviews. Tuned for {occ.emoji} {occ.short.toLowerCase()} trips.
       </PageHeader>
@@ -172,8 +174,19 @@ export function StaysExplorer() {
           className="mb-5"
           title={`Live availability in ${dest.name}`}
           note={`Opens each platform's own search with your dates & ${config.travellers} guests — real-time prices and reviews.`}
-          links={stayLinks(dest, { startDate: config.startDate, nights: config.days, guests: config.travellers, farm: tab === "farm" })}
-        />
+          links={stayLinks(dest, { startDate: config.startDate, nights, guests: config.travellers, farm: tab === "farm" })}
+        >
+          <DateRange
+            variant="pill"
+            unit="nights"
+            start={config.startDate}
+            length={nights}
+            onChange={(st, n) => {
+              if (st !== config.startDate) setStartDate(st);
+              if (n + 1 !== config.days) setDays(n + 1);
+            }}
+          />
+        </LiveLinks>
       )}
 
       {list.length === 0 ? (
