@@ -8,6 +8,7 @@ import { SmartImage } from "@/components/ui/SmartImage";
 import { useTrip } from "@/context/TripContext";
 import { farmsFor, staysFor } from "@/lib/destinations";
 import { duration, inr } from "@/lib/format";
+import { activitySource, destinationSource, propertySource, type ImageSource } from "@/lib/imageSources";
 import { PACE_META, tripTotals } from "@/lib/itinerary";
 import { usePhotoViewer } from "./ImageDownloadModal";
 import { PdfExportButton } from "./PdfExportButton";
@@ -98,13 +99,9 @@ function PhotoGallery() {
   const { openPhoto } = usePhotoViewer();
 
   const photos = useMemo(() => {
-    const list: { imageKey: string; label: string; seed: string; caption: string }[] = [
-      { imageKey: dest.imageKey, label: dest.name, seed: dest.id, caption: dest.tagline },
-    ];
-    dest.highlights.slice(0, 7).forEach((h) => list.push({ imageKey: `kind-${h.kind}`, label: h.name, seed: h.id, caption: dest.name }));
-    [...staysFor(dest.id), ...farmsFor(dest.id)].forEach((p) =>
-      p.imageKeys.forEach((k, i) => list.push({ imageKey: k, label: p.name, seed: `${p.id}-${i}`, caption: `${p.kind} · ${p.neighbourhood}` })),
-    );
+    const list: { source: ImageSource; label: string; caption: string }[] = [0, 1, 2].map((i) => ({ source: destinationSource(dest, i), label: dest.name, caption: dest.tagline }));
+    dest.highlights.slice(0, 7).forEach((h) => list.push({ source: activitySource(h, dest), label: h.name, caption: dest.name }));
+    [...staysFor(dest.id), ...farmsFor(dest.id)].forEach((p) => list.push({ source: propertySource(p, 0, dest), label: p.name, caption: `${p.kind} · ${p.neighbourhood}` }));
     return list.slice(0, 16);
   }, [dest]);
 
@@ -117,12 +114,12 @@ function PhotoGallery() {
       <div className="columns-2 gap-3 sm:columns-3 lg:columns-4">
         {photos.map((p, i) => (
           <button
-            key={`${p.seed}-${i}`}
+            key={`${p.label}-${i}`}
             type="button"
             onClick={() => openPhoto(p)}
             className="group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-2xl shadow-card"
           >
-            <SmartImage imageKey={p.imageKey} label={p.label} seed={p.seed} width={600} className={i % 3 === 0 ? "aspect-[3/4] w-full" : "aspect-[4/3] w-full"} imgClassName="transition duration-500 group-hover:scale-105" />
+            <SmartImage source={p.source} width={600} className={i % 3 === 0 ? "aspect-[3/4] w-full" : "aspect-[4/3] w-full"} imgClassName="transition duration-500 group-hover:scale-105" />
             <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2.5 pt-8 text-left text-xs font-semibold text-white">{p.label}</span>
           </button>
         ))}

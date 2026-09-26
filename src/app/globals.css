@@ -4,8 +4,8 @@
 
 /* ───────────────────────── Design tokens ───────────────────────── */
 :root {
-  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-display: var(--nf-display), "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+  --font-sans: var(--nf-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --font-hand: "Bradley Hand", "Segoe Print", "Comic Sans MS", cursive;
 
   --bg: #faf7f2;
@@ -31,6 +31,7 @@
 
 @layer base {
   html {
+    overflow-x: clip;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
@@ -38,6 +39,7 @@
   body {
     @apply bg-[var(--bg)] text-[var(--ink)] font-sans antialiased;
     min-height: 100dvh;
+    overflow-x: clip;
     overscroll-behavior-y: none;
     /* Field-journal paper grain */
     background-image:

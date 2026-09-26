@@ -10,6 +10,7 @@ import { SmartImage } from "@/components/ui/SmartImage";
 import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
 import { zoneName } from "@/lib/destinations";
+import { activitySource } from "@/lib/imageSources";
 import { cn, duration, inr } from "@/lib/format";
 import { SLOT_META, activityPool, findActivity, swapOptions, type SwapOption } from "@/lib/itinerary";
 
@@ -97,7 +98,7 @@ export function ActivitySwapModal({ target, onClose }: { target: SwapTarget | nu
                 onClick={() => choose(o.activity)}
                 className="group flex w-full items-center gap-3 rounded-2xl border border-[var(--line)] bg-white/60 p-2 text-left transition hover:border-marigold-500/60 hover:bg-white dark:bg-white/[0.03] dark:hover:bg-white/[0.07]"
               >
-                <SmartImage imageKey={`kind-${o.activity.kind}`} label={o.activity.name} seed={o.activity.id} width={220} className="h-20 w-20 shrink-0 rounded-xl" />
+                <SmartImage source={activitySource(o.activity, dest)} width={220} className="h-20 w-20 shrink-0 rounded-xl" />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold leading-snug">{o.activity.name}</p>
                   <p className="muted mt-1 flex flex-wrap gap-x-2.5 gap-y-0.5 text-xs">

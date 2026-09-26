@@ -11,6 +11,7 @@ import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
 import { groupDirectory, searchDestinations } from "@/lib/destinations";
 import { cn } from "@/lib/format";
+import { destinationSource } from "@/lib/imageSources";
 
 const TIER_TONE: Record<Tier, string> = {
   1: "bg-slate-900/80 text-sand-100 dark:bg-sand-100/90 dark:text-slate-900",
@@ -264,7 +265,7 @@ function DestinationOption({
         selected && "ring-2 ring-rose-500/60",
       )}
     >
-      <SmartImage imageKey={d.imageKey} label={d.name} seed={d.id} width={200} className="h-16 w-16 shrink-0 rounded-xl" />
+      <SmartImage source={destinationSource(d)} width={200} className="h-16 w-16 shrink-0 rounded-xl" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <p className="truncate font-semibold">{d.name}</p>

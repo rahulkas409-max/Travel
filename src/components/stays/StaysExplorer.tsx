@@ -5,7 +5,10 @@ import { OCCASION_BY_ID } from "@data/occasions";
 import type { Property, SuitabilityBadge } from "@data/types";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { ArrowDownUp, Heart } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { LiveLinks } from "@/components/explore/LiveLinks";
+import { stayLinks } from "@/lib/links";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useTrip } from "@/context/TripContext";
 import { sound } from "@/lib/audio";
@@ -35,7 +38,9 @@ export function StaysExplorer() {
   const [tab, setTab] = useState<Tab>(dest.farmhouseHub ? "farm" : "stay");
   const [scope, setScope] = useState<Scope>("destination");
   const [badge, setBadge] = useState<SuitabilityBadge | "all">("all");
-  const [matchOccasion, setMatchOccasion] = useState(true);
+  const [matchOccasion, setMatchOccasion] = useState(false);
+  const params = useSearchParams();
+  const tabParam = params.get("tab");
   const [budgetOnly, setBudgetOnly] = useState(false);
   const [sort, setSort] = useState<Sort>("rating");
   const [open, setOpen] = useState<Property | null>(null);
@@ -44,9 +49,12 @@ export function StaysExplorer() {
   useEffect(() => {
     const hasFarms = farmsFor(dest.id).length > 0;
     const hasStays = staysFor(dest.id).length > 0;
-    setTab(dest.farmhouseHub && hasFarms ? "farm" : hasStays ? "stay" : hasFarms ? "farm" : "stay");
-    setScope(hasFarms || hasStays ? "destination" : "region");
-  }, [dest.id, dest.farmhouseHub]);
+    const wanted = tabParam === "farm" || tabParam === "stay" ? tabParam : null;
+    const nextTab: Tab = wanted ?? (dest.farmhouseHub && hasFarms ? "farm" : hasStays ? "stay" : hasFarms ? "farm" : "stay");
+    setTab(nextTab);
+    const hasInTab = nextTab === "farm" ? hasFarms : hasStays;
+    setScope(hasInTab ? "destination" : "region");
+  }, [dest.id, dest.farmhouseHub, tabParam]);
 
   const base = useMemo(() => {
     if (tab === "saved") return ALL_PROPERTIES.filter((p) => savedStays.includes(p.id));
@@ -60,8 +68,11 @@ export function StaysExplorer() {
       .filter((p) => badge === "all" || p.badges.includes(badge))
       .filter((p) => tab === "saved" || !matchOccasion || p.occasions.includes(config.occasion))
       .filter((p) => !budgetOnly || fitsBudget(p, config.budget, config.travellers));
-    return [...filtered].sort((a, b) =>
-      sort === "rating" ? b.rating - a.rating || b.reviewCount - a.reviewCount : sort === "price" ? a.priceRange[0] - b.priceRange[0] : b.wifiMbps - a.wifiMbps,
+    const fit = (x: Property) => Number(x.occasions.includes(config.occasion));
+    return [...filtered].sort(
+      (a, b) =>
+        fit(b) - fit(a) ||
+        (sort === "rating" ? b.rating - a.rating || b.reviewCount - a.reviewCount : sort === "price" ? a.priceRange[0] - b.priceRange[0] : b.wifiMbps - a.wifiMbps),
     );
   }, [base, badge, matchOccasion, budgetOnly, sort, config, tab]);
 
@@ -124,7 +135,7 @@ export function StaysExplorer() {
               ))}
             </div>
             <Toggle on={matchOccasion} onClick={() => setMatchOccasion((v) => !v)}>
-              {occ.emoji} Best for {occ.short}
+              {occ.emoji} Only {occ.short} picks
             </Toggle>
             <Toggle on={budgetOnly} onClick={() => setBudgetOnly((v) => !v)}>
               💰 Within budget
@@ -154,6 +165,15 @@ export function StaysExplorer() {
             ))}
           </div>
         </div>
+      )}
+
+      {tab !== "saved" && (
+        <LiveLinks
+          className="mb-5"
+          title={`Live availability in ${dest.name}`}
+          note={`Opens each platform's own search with your dates & ${config.travellers} guests — real-time prices and reviews.`}
+          links={stayLinks(dest, { startDate: config.startDate, nights: config.days, guests: config.travellers, farm: tab === "farm" })}
+        />
       )}
 
       {list.length === 0 ? (

@@ -1,5 +1,5 @@
-import { TimelineView } from "@/components/itinerary/TimelineView";
+import { HomePage } from "@/components/home/HomePage";
 
-export default function ItineraryPage() {
-  return <TimelineView />;
+export default function Home() {
+  return <HomePage />;
 }

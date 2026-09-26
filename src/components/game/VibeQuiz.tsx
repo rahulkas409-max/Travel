@@ -7,6 +7,26 @@ import { useState } from "react";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { sound } from "@/lib/audio";
 import { cn } from "@/lib/format";
+import { keySource } from "@/lib/imageSources";
+
+/** Open-photo searches for each visual answer card. */
+const OPTION_PHOTO: Record<string, string> = {
+  mountains: "Himalaya snow peaks Himachal",
+  beaches: "Palolem beach Goa",
+  palaces: "Mehrangarh fort Jodhpur",
+  forests: "Nohkalikai Falls",
+  zen: "Tirthan Valley",
+  thrill: "Royal Enfield Ladakh",
+  social: "Fort Kochi street",
+  spiritual: "Varanasi Ganga aarti",
+  romantic: "Lake Pichola sunset",
+  corporate: "Lonavala",
+  school: "Jantar Mantar Jaipur",
+  solo: "Hampi boulders",
+  backpacker: "Old Manali",
+  boutique: "Fontainhas Panjim",
+  luxury: "Umaid Bhawan Palace",
+};
 
 /** 4-step visual vibe quiz with tactile flip-cards. */
 export function VibeQuiz({ initial, onComplete }: { initial?: QuizAnswers; onComplete: (a: QuizAnswers) => void }) {
@@ -85,7 +105,7 @@ export function VibeQuiz({ initial, onComplete }: { initial?: QuizAnswers; onCom
                   )}
                   style={{ transformStyle: "preserve-3d" }}
                 >
-                  <SmartImage imageKey={o.imageKey} label={o.label} seed={o.value} width={600} className="absolute inset-0 h-full w-full" imgClassName="transition duration-500 group-hover:scale-105" />
+                  <SmartImage source={keySource(o.imageKey, o.label, o.value, OPTION_PHOTO[o.value] ? [OPTION_PHOTO[o.value]] : undefined)} width={600} className="absolute inset-0 h-full w-full" imgClassName="transition duration-500 group-hover:scale-105" />
                   <div className={cn("absolute inset-0 bg-gradient-to-br opacity-60 mix-blend-multiply", o.gradient)} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-4 text-white">

@@ -11,6 +11,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { getDestination } from "@/lib/destinations";
 import { clock } from "@/lib/format";
+import { destinationSource } from "@/lib/imageSources";
 import { SLOT_META, generatePlan, scheduleDay } from "@/lib/itinerary";
 
 interface Props {
@@ -55,7 +56,7 @@ export function RevealModal({ match, occasion, budget, onClose, onPlan, onSpinAg
         <div className="space-y-5">
           <motion.div initial={{ scale: 0.8, rotate: -4, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }} transition={{ type: "spring", stiffness: 220, damping: 16 }} className="tape relative -mt-2">
             <div className="overflow-hidden rounded-3xl shadow-lift">
-              <SmartImage imageKey={dest.imageKey} label={dest.name} seed={dest.id} width={1200} priority className="h-56 w-full sm:h-64">
+              <SmartImage source={destinationSource(dest)} width={1200} priority className="h-56 w-full sm:h-64">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-5 text-white">
                   <p className="hand text-lg text-marigold-300">Your surprise trip is…</p>
@@ -105,7 +106,7 @@ export function RevealModal({ match, occasion, budget, onClose, onPlan, onSpinAg
             </div>
           </section>
 
-          <button type="button" onClick={() => openPhoto({ imageKey: dest.imageKey, label: dest.name, seed: dest.id, caption: "Surprise destination wallpaper" })} className="btn-ghost w-full">
+          <button type="button" onClick={() => openPhoto({ source: destinationSource(dest), label: dest.name, caption: "Surprise destination wallpaper" })} className="btn-ghost w-full">
             <Camera className="h-4 w-4" /> Download destination wallpaper
           </button>
         </div>

@@ -141,6 +141,8 @@ interface TripContextValue {
   addRouletteWin: (w: Omit<RouletteWin, "id" | "at">) => void;
   clearRouletteWins: () => void;
   startTrip: (destinationId: string, occasion: Occasion, days?: number, budget?: number) => void;
+  /** Apply several trip settings at once (home search widget) and rebuild the plan. */
+  applyTrip: (patch: Partial<Omit<TripConfig, "seed">>) => void;
   toggleMute: () => void;
   setTheme: (t: ThemePref) => void;
   resetEverything: () => void;
@@ -266,6 +268,10 @@ export function TripProvider({ children }: { children: ReactNode }) {
           patch: { destinationId, occasion, days, ...(budget ? { budget } : {}), seed: cfg.seed + 1 },
           regenerate: true,
         }),
+      applyTrip: (patch) => {
+        const days = patch.days ? Math.min(10, Math.max(1, patch.days)) : undefined;
+        dispatch({ type: "config", patch: { ...patch, ...(days ? { days } : {}), seed: cfg.seed + 1 }, regenerate: true });
+      },
       toggleMute: () => {
         const next = !muted;
         setMuted(next);

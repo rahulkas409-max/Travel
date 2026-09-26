@@ -1,7 +1,7 @@
 "use client";
 
 import { OCCASION_BY_ID } from "@data/occasions";
-import type { Occasion } from "@data/types";
+import type { Destination, Occasion } from "@data/types";
 import { motion, useDragControls, Reorder } from "framer-motion";
 import { AlertTriangle, ArrowDown, ArrowUp, Camera, Clock, GripVertical, IndianRupee, Lightbulb, MapPin, Shuffle, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { usePhotoViewer } from "@/components/export/ImageDownloadModal";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { sound } from "@/lib/audio";
 import { cn, clock, duration, inr } from "@/lib/format";
+import { activitySource } from "@/lib/imageSources";
 import { SLOT_META, type PacingWarning, type ScheduledItem } from "@/lib/itinerary";
 
 const SLOT_TONE = {
@@ -23,6 +24,7 @@ interface Props {
   index: number;
   count: number;
   zoneLabel: string;
+  dest: Destination;
   occasion: Occasion;
   warnings: PacingWarning[];
   highlighted: boolean;
@@ -34,13 +36,13 @@ interface Props {
 }
 
 /** A single draggable time-slot card on the day timeline. */
-export function SlotCard({ s, index, count, zoneLabel, occasion, warnings, highlighted, onSwap, onRemove, onMove, before }: Props) {
+export function SlotCard({ s, index, count, zoneLabel, dest, occasion, warnings, highlighted, onSwap, onRemove, onMove, before }: Props) {
   const controls = useDragControls();
   const { openPhoto } = usePhotoViewer();
   const [tipOpen, setTipOpen] = useState(false);
   const a = s.activity;
   const matches = a.occasions.includes(occasion);
-  const imageKey = `kind-${a.kind}`;
+  const source = activitySource(a, dest);
   const worst = warnings.find((w) => w.level === "danger") ?? warnings.find((w) => w.level === "warn");
 
   return (
@@ -63,7 +65,7 @@ export function SlotCard({ s, index, count, zoneLabel, occasion, warnings, highl
       >
         <div className="flex flex-col sm:flex-row">
           <div className="relative sm:w-56 sm:shrink-0 md:w-64">
-            <SmartImage imageKey={imageKey} label={a.name} seed={a.id} width={640} className="aspect-[16/9] w-full sm:aspect-auto sm:h-full sm:min-h-[180px]" />
+            <SmartImage source={source} width={640} className="aspect-[16/9] w-full sm:aspect-auto sm:h-full sm:min-h-[180px]" />
             <div className={cn("absolute left-3 top-3 rounded-xl bg-gradient-to-br px-2.5 py-1.5 text-white shadow-lg", SLOT_TONE[a.slot])}>
               <p className="text-[10px] font-bold uppercase tracking-wider opacity-90">
                 {SLOT_META[a.slot].emoji} {SLOT_META[a.slot].label}
@@ -72,7 +74,7 @@ export function SlotCard({ s, index, count, zoneLabel, occasion, warnings, highl
             </div>
             <button
               type="button"
-              onClick={() => openPhoto({ imageKey, label: a.name, seed: a.id, caption: `${zoneLabel} · ${SLOT_META[a.slot].label}` })}
+              onClick={() => openPhoto({ source, label: a.name, caption: `${zoneLabel} · ${SLOT_META[a.slot].label}` })}
               className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md transition hover:bg-black/70"
             >
               <Camera className="h-3.5 w-3.5" /> Save Image
