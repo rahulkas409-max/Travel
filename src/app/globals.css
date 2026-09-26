@@ -1,0 +1,194 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ───────────────────────── Design tokens ───────────────────────── */
+:root {
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-hand: "Bradley Hand", "Segoe Print", "Comic Sans MS", cursive;
+
+  --bg: #faf7f2;
+  --bg-rgb: 250 247 242;
+  --bg-elev: rgba(255, 255, 255, 0.72);
+  --ink: #1c1917;
+  --ink-soft: #57534e;
+  --line: rgba(28, 25, 23, 0.1);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0b0f19;
+  --bg-rgb: 11 15 25;
+  --bg-elev: rgba(22, 28, 43, 0.72);
+  --ink: #f5f1ea;
+  --ink-soft: #a8a29e;
+  --line: rgba(245, 241, 234, 0.1);
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-[var(--bg)] text-[var(--ink)] font-sans antialiased;
+    min-height: 100dvh;
+    overscroll-behavior-y: none;
+    /* Field-journal paper grain */
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(245, 158, 11, 0.08), transparent 38%),
+      radial-gradient(circle at 88% 0%, rgba(224, 109, 83, 0.08), transparent 32%),
+      radial-gradient(circle at 50% 100%, rgba(88, 129, 87, 0.07), transparent 40%);
+    background-attachment: fixed;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+  ::selection {
+    background: rgba(245, 158, 11, 0.35);
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-marigold-500 ring-offset-2 ring-offset-[var(--bg)];
+  }
+  input[type="range"] {
+    accent-color: #e06d53;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply rounded-2xl border border-white/60 bg-white/70 shadow-card backdrop-blur-md dark:border-white/10 dark:bg-slate-900/60;
+  }
+  .glass-strong {
+    @apply rounded-2xl border border-white/70 bg-white/85 shadow-card backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/85;
+  }
+  .pill {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide;
+  }
+  .btn {
+    @apply inline-flex min-h-[44px] select-none items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-gradient-to-br from-marigold-500 to-rose-500 text-white shadow-lift hover:brightness-105;
+  }
+  .btn-ghost {
+    @apply btn border border-[var(--line)] bg-white/60 text-[var(--ink)] hover:bg-white dark:bg-white/5 dark:hover:bg-white/10;
+  }
+  .btn-sage {
+    @apply btn bg-sage-500 text-white hover:bg-sage-600;
+  }
+  .icon-btn {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-white/60 text-[var(--ink)] transition hover:bg-white active:scale-95 dark:bg-white/5 dark:hover:bg-white/10;
+  }
+  .section-title {
+    @apply font-display text-2xl font-semibold sm:text-3xl;
+  }
+  .eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-rose-500;
+  }
+  .muted {
+    @apply text-[var(--ink-soft)];
+  }
+  .hand {
+    font-family: var(--font-hand);
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .shimmer {
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.09) 50%, rgba(0, 0, 0, 0.04) 100%);
+    background-size: 800px 100%;
+    @apply animate-shimmer;
+  }
+  .dark .shimmer {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.03) 100%);
+    background-size: 800px 100%;
+  }
+  .tape {
+    position: relative;
+  }
+  .tape::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    width: 72px;
+    height: 18px;
+    transform: translateX(-50%) rotate(-3deg);
+    background: rgba(245, 158, 11, 0.35);
+    border-radius: 2px;
+    z-index: 2;
+  }
+}
+
+/* Keep the off-screen dossier out of layout but renderable for html2canvas */
+.dossier-offscreen {
+  position: fixed;
+  top: 0;
+  left: -20000px;
+  width: 794px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ───────────────────────── Print stylesheet (A4 fallback) ───────────────────────── */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+  .app-shell,
+  .no-print {
+    display: none !important;
+  }
+  .print-root {
+    position: static !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 210mm !important;
+    z-index: auto !important;
+  }
+  .print-root [data-a4-page] {
+    width: 210mm !important;
+    height: 297mm !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    page-break-after: always;
+    break-after: page;
+    overflow: hidden;
+  }
+  .print-root [data-a4-page]:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
