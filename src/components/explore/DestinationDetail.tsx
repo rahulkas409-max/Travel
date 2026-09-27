@@ -25,6 +25,7 @@ import { DestinationCard } from "./DestinationCard";
 import { LiveLinks } from "./LiveLinks";
 import { WeatherCard } from "./WeatherCard";
 import { WikiAbout } from "./WikiAbout";
+import { VoyageGuide } from "./VoyageGuide";
 import { QuoteCta } from "@/components/money/QuoteCta";
 
 const SECTIONS = [
@@ -134,9 +135,11 @@ export function DestinationDetail({ id }: { id: string }) {
           </div>
 
           <div className="glass p-5">
-            <h2 className="mb-2 font-display text-xl font-bold">About {d.name}</h2>
+            <h2 className="mb-2 text-lg font-extrabold tracking-tight">About {d.name}</h2>
             <WikiAbout title={ABOUT_WIKI[d.id] ?? GEO[d.id]?.wiki ?? d.name} fallback={d.tagline} />
           </div>
+
+          <VoyageGuide destinationId={d.id} name={d.name} />
 
           <WeatherCard destinationId={d.id} name={d.name} />
         </div>
@@ -165,7 +168,7 @@ export function DestinationDetail({ id }: { id: string }) {
                     )}
                   >
                     {o.emoji} {o.short}
-                    <span className={cn("block text-[10px] font-medium", fit ? "text-sage-600 dark:text-sage-300" : "muted")}>{fit ? "Great fit" : "Possible"}</span>
+                    <span className={cn("block text-[10px] font-medium", fit ? "text-sage-700 dark:text-sage-300" : "muted")}>{fit ? "Great fit" : "Possible"}</span>
                   </button>
                 );
               })}
@@ -202,7 +205,7 @@ export function DestinationDetail({ id }: { id: string }) {
 
       {/* ───── Experiences ───── */}
       <section id="experiences" className="scroll-mt-40">
-        <h2 className="font-display text-2xl font-bold">Top experiences</h2>
+        <h2 className="section-title">Top experiences</h2>
         <p className="muted text-sm">Sorted for {occ.emoji} {occ.short.toLowerCase()} trips · insider tips from locals</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {highlights.map((h, i) => (
@@ -225,7 +228,7 @@ export function DestinationDetail({ id }: { id: string }) {
                   <span>{h.occasions.map((o) => OCCASION_BY_ID[o].emoji).join(" ")}</span>
                 </p>
                 <p className="mt-2 text-sm leading-snug">
-                  <span className="hand font-bold text-rose-600 dark:text-rose-300">Tip: </span>
+                  <span className="hand font-bold text-rose-700 dark:text-rose-300">Tip: </span>
                   {h.tip}
                 </p>
               </div>
@@ -238,7 +241,7 @@ export function DestinationDetail({ id }: { id: string }) {
       <section id="stays" className="scroll-mt-40 space-y-4">
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="font-display text-2xl font-bold">Where to stay</h2>
+            <h2 className="section-title">Where to stay</h2>
             <p className="muted text-sm">{stays.length ? "Curated farmhouses, estates & stays with review breakdowns" : "Compare live availability on trusted platforms"}</p>
           </div>
           {stays.length > 0 && (
@@ -279,7 +282,7 @@ export function DestinationDetail({ id }: { id: string }) {
       <section id="food" className="scroll-mt-40">
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="font-display text-2xl font-bold">What to eat</h2>
+            <h2 className="section-title">What to eat</h2>
             <p className="muted text-sm">{food.regional ? `${d.regionName} staples` : food.intro}</p>
           </div>
           <Link href="/food" onClick={() => setDestination(d.id)} className="text-sm font-bold text-rose-600 hover:underline dark:text-rose-300">
@@ -308,7 +311,7 @@ export function DestinationDetail({ id }: { id: string }) {
 
       {/* ───── Getting there ───── */}
       <section id="getting-there" className="scroll-mt-40 space-y-4">
-        <h2 className="font-display text-2xl font-bold">Getting there & around</h2>
+        <h2 className="section-title">Getting there & around</h2>
         <div className="glass flex items-start gap-3 p-4">
           <Plane className="mt-0.5 h-5 w-5 shrink-0 text-rose-500" />
           <div>
@@ -321,7 +324,7 @@ export function DestinationDetail({ id }: { id: string }) {
             <div key={t.mode} className="glass p-4">
               <div className="flex items-baseline justify-between gap-2">
                 <p className="font-bold">{t.mode}</p>
-                <p className="text-sm font-bold text-rose-600 dark:text-rose-300">{t.costRange}</p>
+                <p className="text-sm font-bold text-rose-700 dark:text-rose-300">{t.costRange}</p>
               </div>
               <p className="muted mt-1 text-sm">{t.tip}</p>
             </div>

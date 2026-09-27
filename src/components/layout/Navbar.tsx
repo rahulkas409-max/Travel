@@ -153,7 +153,7 @@ export function Navbar() {
                 >
                   {active && <motion.span layoutId="bottomNavPill" transition={spring} className="absolute inset-x-1.5 inset-y-1.5 rounded-2xl bg-gradient-to-b from-marigold-500/15 to-rose-500/15" />}
                   <Icon className={cn("relative h-5 w-5 transition", active ? "text-rose-500" : "opacity-60")} strokeWidth={active ? 2.4 : 2} />
-                  <span className={cn("relative truncate", active ? "text-rose-600 dark:text-rose-300" : "opacity-70")}>{item.short}</span>
+                  <span className={cn("relative truncate", active ? "text-rose-700 dark:text-rose-300" : "opacity-70")}>{item.short}</span>
                 </Link>
               );
             })}
@@ -168,7 +168,7 @@ export function Navbar() {
             >
               {moreActive && <motion.span layoutId="bottomNavPill" transition={spring} className="absolute inset-x-1.5 inset-y-1.5 rounded-2xl bg-gradient-to-b from-marigold-500/15 to-rose-500/15" />}
               <Grid2x2 className={cn("relative h-5 w-5", moreActive ? "text-rose-500" : "opacity-60")} />
-              <span className={cn("relative", moreActive ? "text-rose-600 dark:text-rose-300" : "opacity-70")}>More</span>
+              <span className={cn("relative", moreActive ? "text-rose-700 dark:text-rose-300" : "opacity-70")}>More</span>
             </button>
           </div>
         </nav>

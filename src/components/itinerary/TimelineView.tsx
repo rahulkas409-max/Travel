@@ -167,7 +167,7 @@ export function TimelineView() {
         <div className="min-w-0">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-sm font-semibold">
-              Day {day.day} · base: <span className="text-rose-600 dark:text-rose-300">{zoneName(dest, day.stayZone)}</span>
+              Day {day.day} · base: <span className="text-rose-700 dark:text-rose-300">{zoneName(dest, day.stayZone)}</span>
             </p>
             <div className="flex gap-1">
               <button type="button" className="icon-btn !h-9 !w-9" onClick={() => goDay(dayIdx - 1)} disabled={dayIdx === 0} aria-label="Previous day">

@@ -10,7 +10,7 @@ import { cn, inr } from "@/lib/format";
 import { fileToLogo, usePro } from "@/lib/pro";
 
 /** Organiser Pro: unlock with a code, then brand the PDF, add a group roster and per-person cost split. */
-export function ProPanel() {
+export function ProPanel({ showBuyLink = true }: { showBuyLink?: boolean }) {
   const { isPro, pro, unlock, signOut, branding, setBranding, costs, setCosts } = usePro();
   const { config, toast } = useTrip();
   const [code, setCode] = useState("");
@@ -73,10 +73,12 @@ export function ProPanel() {
                 {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />} Unlock
               </button>
             </form>
-            {msg && <p className={cn("text-xs", msg.ok ? "text-sage-600" : "text-rose-600")}>{msg.text}</p>}
-            <Link href="/pro" className="btn-ghost w-full">
-              Get Pro — {inr(PLANS.proTrip.price)}/trip or {inr(PLANS.proYear.price)}/year
-            </Link>
+            {msg && <p className={cn("text-xs", msg.ok ? "text-sage-700 dark:text-sage-300" : "text-rose-700 dark:text-rose-300")}>{msg.text}</p>}
+            {showBuyLink && (
+              <Link href="/pro" className="btn-ghost w-full">
+                Get Pro — {inr(PLANS.proTrip.price)}/trip or {inr(PLANS.proYear.price)}/year
+              </Link>
+            )}
           </div>
         </div>
       ) : (

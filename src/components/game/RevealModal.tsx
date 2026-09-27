@@ -94,7 +94,7 @@ export function RevealModal({ match, occasion, budget, onClose, onPlan, onSpinAg
                   <ul className="mt-1.5 space-y-1 text-sm">
                     {d.items.map((s) => (
                       <li key={s.item.uid} className="flex gap-2">
-                        <span className="w-16 shrink-0 font-semibold tabular-nums text-rose-600 dark:text-rose-300">{clock(s.start)}</span>
+                        <span className="w-16 shrink-0 font-semibold tabular-nums text-rose-700 dark:text-rose-300">{clock(s.start)}</span>
                         <span className="min-w-0">
                           {SLOT_META[s.activity.slot].emoji} {s.activity.name}
                         </span>

@@ -101,7 +101,7 @@ export function HomeSearch() {
                     sound.play("tick", { intensity: 0.6 });
                     setService(s.id);
                   }}
-                  className={cn("relative flex min-w-[76px] shrink-0 flex-col items-center gap-1 px-3 pb-3 pt-2 text-xs font-semibold transition sm:min-w-[96px]", active ? "text-rose-600 dark:text-rose-300" : "opacity-70 hover:opacity-100")}
+                  className={cn("relative flex min-w-[76px] shrink-0 flex-col items-center gap-1 px-3 pb-3 pt-2 text-xs font-semibold transition sm:min-w-[96px]", active ? "text-rose-700 dark:text-rose-300" : "opacity-70 hover:opacity-100")}
                 >
                   <span className={cn("flex h-10 w-10 items-center justify-center rounded-2xl transition", active ? "bg-gradient-to-br from-marigold-400 to-rose-500 text-white shadow-lift" : "bg-black/[0.04] dark:bg-white/10")}>
                     <Icon className="h-5 w-5" />

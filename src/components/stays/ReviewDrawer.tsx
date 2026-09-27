@@ -208,7 +208,7 @@ export function ReviewDrawer({ property: p, onClose }: { property: Property | nu
                             {TAG_EMOJI[r.tag]} {r.tag}
                           </span>
                           {r.verified ? (
-                            <span className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-sage-600 dark:text-sage-300">
+                            <span className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-sage-700 dark:text-sage-300">
                               <BadgeCheck className="h-3.5 w-3.5" /> Verified stay
                             </span>
                           ) : (

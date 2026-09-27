@@ -59,7 +59,7 @@ export function TransitGuide() {
       </LiveLinks>
 
       <section>
-        <h2 className="section-title mb-4 !text-xl">Ways to move</h2>
+        <h2 className="section-title mb-4">Ways to move</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {dest.transit.map((t, i) => {
             const Icon = ICONS[t.icon];
@@ -72,7 +72,7 @@ export function TransitGuide() {
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline justify-between gap-x-2">
                       <h3 className="font-semibold">{t.mode}</h3>
-                      <span className="text-sm font-bold text-rose-600 dark:text-rose-300">{t.costRange}</span>
+                      <span className="text-sm font-bold text-rose-700 dark:text-rose-300">{t.costRange}</span>
                     </div>
                     <p className="muted text-xs">Best for: {t.bestFor}</p>
                     <p className="mt-2 text-sm">{t.tip}</p>
@@ -86,7 +86,7 @@ export function TransitGuide() {
 
       {links.length > 0 && (
         <section>
-          <h2 className="section-title mb-1 !text-xl">
+          <h2 className="section-title mb-1">
             <Route className="mr-1 inline h-5 w-5 text-marigold-500" /> Transit friction map
           </h2>
           <p className="muted mb-4 text-sm">Door-to-door times between areas. Anything over 90 minutes gets flagged in your itinerary.</p>
@@ -118,7 +118,7 @@ export function TransitGuide() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section>
-          <h2 className="section-title mb-3 !text-xl">🚆 Train & bus tips</h2>
+          <h2 className="section-title mb-3">🚆 Train & bus tips</h2>
           <ul className="glass space-y-3 p-4 text-sm">
             {dest.trainTips.map((t) => (
               <li key={t} className="flex gap-2">
@@ -129,7 +129,7 @@ export function TransitGuide() {
           </ul>
         </section>
         <section>
-          <h2 className="section-title mb-3 flex items-center gap-2 !text-xl">
+          <h2 className="section-title mb-3 flex items-center gap-2">
             <ShieldAlert className="h-5 w-5 text-rose-500" /> Scam alerts
           </h2>
           <ul className="space-y-2">
@@ -143,7 +143,7 @@ export function TransitGuide() {
       </div>
 
       <section>
-        <h2 className="section-title mb-3 flex items-center gap-2 !text-xl">
+        <h2 className="section-title mb-3 flex items-center gap-2">
           <Siren className="h-5 w-5 text-rose-500" /> Emergency numbers
         </h2>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">

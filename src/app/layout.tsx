@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Fraunces, Manrope } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
 import "./globals.css";
 
-const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--nf-sans", display: "swap" });
-const display = Playfair_Display({ subsets: ["latin"], variable: "--nf-display", display: "swap", weight: ["600", "700", "800"] });
+const sans = Manrope({ subsets: ["latin"], variable: "--nf-sans", display: "swap" });
+const display = Fraunces({ subsets: ["latin"], variable: "--nf-display", display: "swap", weight: ["600", "700"], style: ["normal", "italic"] });
 
 export const metadata: Metadata = {
   title: {

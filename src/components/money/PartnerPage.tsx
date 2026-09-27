@@ -26,7 +26,7 @@ export function PartnerPage() {
   const initial = (params.get("plan") as (typeof CHOICES)[number]["id"]) ?? "free";
   const [plan, setPlan] = useState<(typeof CHOICES)[number]["id"]>(CHOICES.some((c) => c.id === initial) ? initial : "free");
   const [form, setForm] = useState({ businessName: "", propertyType: TYPES[0], city: "", name: "", phone: "", email: "", message: "", website: "" });
-  const [consent, setConsent] = useState(true);
+  const [consent, setConsent] = useState(false);
   const [state, setState] = useState<{ kind: "idle" | "sending" | "error" | "done"; msg?: string; id?: string }>({ kind: "idle" });
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -37,7 +37,7 @@ export function PartnerPage() {
       const res = await fetch("/api/enquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "listing", ...form, plan, consent, source: "partner-page" }),
+        body: JSON.stringify({ type: "listing", ...form, plan, consent, adult: consent, source: "partner-page" }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) return setState({ kind: "error", msg: data.error ?? "Couldn't submit — try WhatsApp." });
@@ -97,7 +97,7 @@ export function PartnerPage() {
                       aria-pressed={plan === c.id}
                     >
                       <p className="text-sm font-bold">{c.title}</p>
-                      <p className="text-sm font-extrabold text-rose-600 dark:text-rose-300">{c.price}</p>
+                      <p className="text-sm font-extrabold text-rose-700 dark:text-rose-300">{c.price}</p>
                       <p className="muted text-[11px]">{c.note}</p>
                     </button>
                   ))}
@@ -134,7 +134,7 @@ export function PartnerPage() {
               <label className="flex items-start gap-2 text-xs">
                 <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-4 w-4 accent-rose-500" />
                 <span className="muted">
-                  I own or manage this property and agree to the{" "}
+                  I am 18+, I own or manage this property, and I agree to the{" "}
                   <Link href="/terms" className="underline">
                     terms
                   </Link>{" "}
@@ -147,7 +147,7 @@ export function PartnerPage() {
               </label>
               {state.kind === "error" && <p className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-200">{state.msg}</p>}
               <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
-                <button type="submit" disabled={state.kind === "sending"} className="btn-primary !min-h-[50px] text-base">
+                <button type="submit" disabled={state.kind === "sending" || !consent} className="btn-primary !min-h-[50px] text-base">
                   {state.kind === "sending" && <Loader2 className="h-5 w-5 animate-spin" />} Submit listing
                 </button>
                 <a href={wa} target="_blank" rel="noopener noreferrer" className="btn border border-[var(--line)]">

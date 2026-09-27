@@ -48,10 +48,21 @@
       radial-gradient(circle at 50% 100%, rgba(88, 129, 87, 0.07), transparent 40%);
     background-attachment: fixed;
   }
-  h1,
+  /* Type scale: serif display for page titles, sans for everything else. */
+  h1 {
+    @apply font-display tracking-tight;
+    font-optical-sizing: auto;
+  }
   h2,
   h3 {
-    @apply font-display tracking-tight;
+    @apply tracking-tight;
+  }
+  body {
+    font-feature-settings: "ss01", "cv11";
+  }
+  .tabular-nums,
+  table {
+    font-variant-numeric: tabular-nums;
   }
   ::selection {
     background: rgba(245, 158, 11, 0.35);
@@ -96,10 +107,13 @@
     @apply h-auto py-2;
   }
   .section-title {
-    @apply font-display text-2xl font-semibold sm:text-3xl;
+    @apply font-sans text-xl font-extrabold tracking-tight sm:text-2xl;
+  }
+  .section-sub {
+    @apply mt-0.5 text-sm text-[var(--ink-soft)];
   }
   .eyebrow {
-    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-rose-500;
+    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-rose-700 dark:text-rose-300;
   }
   .muted {
     @apply text-[var(--ink-soft)];

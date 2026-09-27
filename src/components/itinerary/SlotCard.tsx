@@ -96,7 +96,7 @@ export function SlotCard({ s, index, count, zoneLabel, dest, occasion, warnings,
                 <GripVertical className="h-4 w-4" />
               </button>
               <div className="min-w-0 flex-1">
-                <h3 className="font-display text-lg font-semibold leading-snug">{a.name}</h3>
+                <h3 className="text-base font-bold leading-snug sm:text-[1.05rem]">{a.name}</h3>
                 <div className="muted mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                   <span className="inline-flex items-center gap-1">
                     <Clock className="h-3.5 w-3.5" /> {duration(a.durationMins)} · till {clock(s.end)}
@@ -131,9 +131,9 @@ export function SlotCard({ s, index, count, zoneLabel, dest, occasion, warnings,
               className="mt-3 flex gap-2 rounded-xl border border-dashed border-marigold-400/60 bg-marigold-50/70 p-2.5 text-left text-[13px] leading-snug text-stone-700 dark:bg-marigold-500/[0.07] dark:text-stone-200"
               aria-expanded={tipOpen}
             >
-              <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-marigold-600" />
+              <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-marigold-700" />
               <span className={cn(!tipOpen && "line-clamp-2")}>
-                <span className="hand mr-1 text-sm font-bold text-rose-600 dark:text-rose-300">Insider tip:</span>
+                <span className="hand mr-1 text-sm font-bold text-rose-700 dark:text-rose-300">Insider tip:</span>
                 {a.tip}
               </span>
             </button>

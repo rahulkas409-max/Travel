@@ -37,7 +37,7 @@ export function RentalEstimator() {
 
   return (
     <div className="glass p-5">
-      <h3 className="flex items-center gap-2 font-display text-xl font-semibold">
+      <h3 className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
         <Calculator className="h-5 w-5 text-marigold-500" /> Rental estimator
       </h3>
       <p className="muted mt-1 text-sm">Typical {dest.regionName} rates — negotiate for 3+ days.</p>

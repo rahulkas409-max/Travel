@@ -33,6 +33,7 @@ export function PayOptions({ plan, reference, className }: { plan: PlanId; refer
           {inr(p.price)} <span className="text-xs font-medium text-white/70">{p.unit}</span>
         </span>
       </div>
+      <p className="muted -mt-1 text-center text-[11px]">Final price · all taxes included · no hidden charges</p>
 
       {methods.map((m) => (
         <a

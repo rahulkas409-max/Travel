@@ -41,7 +41,7 @@ export function WhatsAppExporter() {
     <div className="glass flex flex-col p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="flex items-center gap-2 font-display text-xl font-semibold">
+          <h3 className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
             <MessageCircle className="h-5 w-5 text-[#25D366]" /> WhatsApp format
           </h3>
           <p className="muted mt-1 text-sm">Bold headings, emojis and times — ready for your group chat.</p>

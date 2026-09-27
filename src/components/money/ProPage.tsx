@@ -56,14 +56,14 @@ export function ProPage() {
                 <b>3.</b> Enter the code below to unlock branding, roster and cost split on this device.
               </li>
             </ol>
-            <ProPanel />
+            <ProPanel showBuyLink={false} />
           </div>
           <aside>
             <PayOptions plan={plan} />
           </aside>
         </div>
       )}
-      {isPro && <ProPanel />}
+      {isPro && <ProPanel showBuyLink={false} />}
     </div>
   );
 }

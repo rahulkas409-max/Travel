@@ -60,7 +60,7 @@ export function FoodRadar() {
       </PageHeader>
 
       <section>
-        <h2 className="section-title mb-3 !text-xl">Staple dishes</h2>
+        <h2 className="section-title mb-3">Staple dishes</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <AnimatePresence mode="popLayout">
             {dishes.map((d, i) => (
@@ -78,7 +78,7 @@ export function FoodRadar() {
                   <div className="flex items-start gap-2">
                     <VegDot veg={d.veg} />
                     <div className="min-w-0">
-                      <h3 className="font-display font-semibold leading-tight">{d.name}</h3>
+                      <h3 className="font-bold leading-tight">{d.name}</h3>
                       {d.localName && <p className="hand text-sm text-rose-500">{d.localName}</p>}
                     </div>
                   </div>
@@ -100,7 +100,7 @@ export function FoodRadar() {
 
       <section className="mt-10">
         <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="section-title !text-xl">Iconic dhabas, lanes & legends</h2>
+          <h2 className="section-title">Iconic dhabas, lanes & legends</h2>
           <div className="no-scrollbar -mx-4 flex gap-1.5 overflow-x-auto px-4 sm:mx-0 sm:px-0">
             {TYPES.map((t) => (
               <button
@@ -147,7 +147,7 @@ export function FoodRadar() {
                     ))}
                   </div>
                   <p className="mt-2 text-sm">
-                    <span className="hand font-bold text-rose-600 dark:text-rose-300">Tip: </span>
+                    <span className="hand font-bold text-rose-700 dark:text-rose-300">Tip: </span>
                     {s.tip}
                   </p>
                 </div>

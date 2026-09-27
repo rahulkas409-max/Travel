@@ -116,7 +116,7 @@ export function DateRange({ start, length, onChange, unit = "days", maxLength = 
         <span className="block text-[11px] font-bold uppercase tracking-wider opacity-60">{l2}</span>
         <span className="mt-0.5 block text-[1.45rem] font-extrabold leading-tight sm:text-[1.6rem]">{B.big}</span>
         <span className="muted block text-xs">
-          {B.small} · <b className="text-rose-600 dark:text-rose-300">{count}</b>
+          {B.small} · <b className="text-rose-700 dark:text-rose-300">{count}</b>
         </span>
         <input type="date" value={end} min={minEnd} max={maxEnd} onClick={openPicker} onChange={(e) => setEnd(e.target.value)} className="absolute inset-0 h-full w-full cursor-pointer text-base opacity-0" aria-label={l2} />
       </label>

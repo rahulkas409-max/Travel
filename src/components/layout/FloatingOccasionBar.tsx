@@ -14,9 +14,9 @@ const PACES: Pace[] = ["relaxed", "balanced", "packed"];
 const spring = { type: "spring", stiffness: 500, damping: 38, mass: 0.8 } as const;
 
 export function budgetTierLabel(b: number): { label: string; tone: string } {
-  if (b < 2000) return { label: "Backpacker", tone: "text-sage-600 dark:text-sage-300" };
+  if (b < 2000) return { label: "Backpacker", tone: "text-sage-700 dark:text-sage-300" };
   if (b <= 6000) return { label: "Boutique Comfort", tone: "text-marigold-600 dark:text-marigold-400" };
-  return { label: "Luxury Heritage", tone: "text-rose-600 dark:text-rose-300" };
+  return { label: "Luxury Heritage", tone: "text-rose-700 dark:text-rose-300" };
 }
 
 /**

@@ -33,7 +33,7 @@ export function Carousel({ title, subtitle, href, children, className }: { title
     <section className={cn("relative", className)}>
       <div className={cn("mb-3 flex items-end justify-between gap-3", !title && "justify-end")}>
         <div className={cn("min-w-0", !title && "hidden")}>
-          <h2 className="font-display text-2xl font-bold leading-tight sm:text-[1.7rem]">{title}</h2>
+          <h2 className="section-title">{title}</h2>
           {subtitle && <p className="muted mt-0.5 text-sm">{subtitle}</p>}
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
