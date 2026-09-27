@@ -55,7 +55,7 @@ export function AdminPage() {
       ) : (
         <>
           <section className="glass p-5">
-            <h2 className="font-display text-xl font-bold">Setup checklist</h2>
+            <h2 className="text-lg font-extrabold tracking-tight">Setup checklist</h2>
             <p className="muted text-xs">Add missing values in Vercel → Settings → Environment Variables, then redeploy. See .env.example.</p>
             <ul className="mt-3 space-y-1.5 text-sm">
               {Object.entries(status).map(([k, v]) => (
@@ -69,7 +69,7 @@ export function AdminPage() {
           </section>
 
           <section className="glass space-y-3 p-5">
-            <h2 className="font-display text-xl font-bold">Issue a Pro access code</h2>
+            <h2 className="text-lg font-extrabold tracking-tight">Issue a Pro access code</h2>
             <p className="muted text-xs">After you receive a payment, create a code and send it to the buyer.</p>
             <div className="grid gap-2 sm:grid-cols-3">
               <input value={tag} onChange={(e) => setTag(e.target.value)} placeholder="Tag e.g. DPSNOIDA" className="input uppercase" maxLength={8} />

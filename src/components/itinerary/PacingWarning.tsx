@@ -12,10 +12,10 @@ const LEVEL = {
 } as const;
 
 export function loadLabel(load: number) {
-  if (load > 115) return { label: "Unrealistic", tone: "text-rose-600 dark:text-rose-300", bar: "from-rose-500 to-rose-600" };
+  if (load > 115) return { label: "Unrealistic", tone: "text-rose-700 dark:text-rose-300", bar: "from-rose-500 to-rose-600" };
   if (load > 100) return { label: "Tight", tone: "text-marigold-600 dark:text-marigold-400", bar: "from-marigold-500 to-rose-500" };
-  if (load < 60) return { label: "Easy-going", tone: "text-sage-600 dark:text-sage-300", bar: "from-sage-400 to-sage-500" };
-  return { label: "Well paced", tone: "text-sage-600 dark:text-sage-300", bar: "from-sage-500 to-marigold-400" };
+  if (load < 60) return { label: "Easy-going", tone: "text-sage-700 dark:text-sage-300", bar: "from-sage-400 to-sage-500" };
+  return { label: "Well paced", tone: "text-sage-700 dark:text-sage-300", bar: "from-sage-500 to-marigold-400" };
 }
 
 /** Pacing meter for one day + its warnings (ghat delays, sunset timing, curfews…). */

@@ -3,7 +3,7 @@ import "server-only";
 /** A lead / enquiry captured by RoamIndia (group quote, property enquiry or host listing). */
 export interface EnquiryRecord {
   id: string;
-  type: "group" | "property" | "listing";
+  type: "group" | "property" | "listing" | "grievance";
   createdAt: string;
   name: string;
   phone: string;
@@ -23,6 +23,8 @@ export interface EnquiryRecord {
   city?: string;
   propertyType?: string;
   plan?: string;
+  /** Grievance / data-rights request category */
+  category?: string;
   source: string;
 }
 
@@ -81,6 +83,8 @@ export async function deliverEnquiry(rec: EnquiryRecord): Promise<DeliveryResult
 
 /** Human-readable one-liner (also used by Slack/Discord webhooks via `text` / `content`). */
 export function summary(r: EnquiryRecord): string {
+  if (r.type === "grievance")
+    return `⚖️ Grievance / data request ${r.id} [${r.category ?? "general"}] from ${r.name}, ${r.phone}${r.email ? `, ${r.email}` : ""}: ${r.message ?? ""} — acknowledge within 48h`;
   if (r.type === "listing")
     return `🏡 New listing request ${r.id}: ${r.businessName} (${r.propertyType}) in ${r.city} — plan ${r.plan ?? "free"} — ${r.name}, ${r.phone}`;
   return `📩 New ${r.type === "property" ? "property" : "group"} enquiry ${r.id}: ${r.destinationName ?? ""}${r.propertyName ? ` · ${r.propertyName}` : ""} · ${r.occasion ?? ""} · ${r.groupSize ?? "?"} people · ${r.startDate ?? "flexible"} · ₹${r.budgetPerPerson ?? "?"}/pp/day — ${r.name}, ${r.phone}`;

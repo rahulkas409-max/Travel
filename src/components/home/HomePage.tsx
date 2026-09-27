@@ -92,7 +92,7 @@ export function HomePage() {
       <section>
         <div className="mb-3 flex items-end justify-between">
           <div>
-            <h2 className="font-display text-2xl font-bold sm:text-[1.7rem]">Handpicked collections</h2>
+            <h2 className="section-title">Handpicked collections</h2>
             <p className="muted text-sm">Browse by what you&apos;re in the mood for</p>
           </div>
           <Link href="/destinations" className="text-sm font-bold text-rose-600 hover:underline dark:text-rose-300">
@@ -126,7 +126,7 @@ export function HomePage() {
 
       {/* ───── Explore by region ───── */}
       <section>
-        <h2 className="font-display text-2xl font-bold sm:text-[1.7rem]">Explore by region</h2>
+        <h2 className="section-title">Explore by region</h2>
         <LayoutGroup id="home-regions">
           <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
             {REGIONS.map((r) => (

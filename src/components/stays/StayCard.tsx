@@ -91,7 +91,7 @@ export function StayCard({ p, onOpen, variant = "stay", children }: Props) {
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="font-display text-lg font-semibold leading-snug">{p.name}</h3>
+            <h3 className="text-base font-bold leading-snug sm:text-[1.05rem]">{p.name}</h3>
             <p className="muted truncate text-xs">{p.neighbourhood}</p>
           </div>
           <div className="shrink-0 text-right">
@@ -130,7 +130,7 @@ export function StayCard({ p, onOpen, variant = "stay", children }: Props) {
               <span className="muted text-xs font-medium"> – {inr(p.priceRange[1])}</span>
             </p>
             <p className="muted text-[11px]">per {p.priceUnit}</p>
-            {within && <p className="mt-0.5 text-[11px] font-semibold text-sage-600 dark:text-sage-300">✓ Fits your ₹{config.budget.toLocaleString("en-IN")}/day</p>}
+            {within && <p className="mt-0.5 text-[11px] font-semibold text-sage-700 dark:text-sage-300">✓ Fits your ₹{config.budget.toLocaleString("en-IN")}/day</p>}
           </div>
           <button
             type="button"

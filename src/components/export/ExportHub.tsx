@@ -31,7 +31,7 @@ export function ExportHub() {
 
       <section className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
         <div className="glass flex flex-col p-5">
-          <h3 className="flex items-center gap-2 font-display text-xl font-semibold">
+          <h3 className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
             <FileText className="h-5 w-5 text-rose-500" /> A4 PDF dossier
           </h3>
           <div className="mt-4 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
@@ -112,7 +112,7 @@ function PhotoGallery() {
 
   return (
     <section>
-      <h2 className="section-title mb-1 flex items-center gap-2 !text-xl">
+      <h2 className="section-title mb-1 flex items-center gap-2">
         <Camera className="h-5 w-5 text-marigold-500" /> High-res photos & wallpapers
       </h2>
       <p className="muted mb-4 text-sm">Tap any photo to download the 2400px original or a phone-sized wallpaper.</p>

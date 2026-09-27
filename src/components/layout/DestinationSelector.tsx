@@ -152,7 +152,7 @@ export function DestinationPicker({
         )}
         {groups.map((g) => (
           <section key={g.region}>
-            <h3 className="mb-2 flex items-center gap-2 font-display text-lg font-semibold">
+            <h3 className="mb-2 flex items-center gap-2 text-lg font-extrabold tracking-tight">
               <span>{g.emoji}</span> {g.regionName}
             </h3>
             <div className="space-y-3">

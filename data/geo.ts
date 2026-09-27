@@ -131,3 +131,19 @@ export const ABOUT_WIKI: Record<string, string> = {
   cherrapunji: "Cherrapunji",
   tawang: "Tawang",
 };
+
+/** Wikivoyage article per destination (travel guide text + curated panoramic banner). */
+export const VOYAGE: Record<string, string> = {
+  "delhi-ncr": "Delhi", jaipur: "Jaipur", varanasi: "Varanasi", amritsar: "Amritsar", srinagar: "Srinagar", shimla: "Shimla", chandigarh: "Chandigarh",
+  jibhi: "Jibhi", sethan: "Manali", spiti: "Spiti", shoja: "Shoja", landour: "Mussoorie", chopta: "Chopta", "leh-ladakh": "Leh",
+  mumbai: "Mumbai", pune: "Lonavala", udaipur: "Udaipur", jodhpur: "Jodhpur", "north-goa": "North Goa", "south-goa": "South Goa", hampi: "Hampi",
+  "rann-of-kutch": "Kutch", alibaug: "Alibag", diu: "Diu", kumbhalgarh: "Kumbhalgarh",
+  bengaluru: "Bangalore", chennai: "Chennai", hyderabad: "Hyderabad", kochi: "Kochi", mysore: "Mysore", pondicherry: "Puducherry", madurai: "Madurai",
+  visakhapatnam: "Visakhapatnam", munnar: "Munnar", coorg: "Kodagu", gokarna: "Gokarna", varkala: "Varkala", wayanad: "Wayanad", kodaikanal: "Kodaikanal",
+  kolkata: "Kolkata", bhubaneswar: "Bhubaneswar", puri: "Puri", patna: "Patna", ranchi: "Ranchi", darjeeling: "Darjeeling", kalimpong: "Kalimpong",
+  mandarmani: "Mandarmani", sundarbans: "Sundarbans National Park",
+  bhopal: "Bhopal", indore: "Indore", raipur: "Raipur", gwalior: "Gwalior", jabalpur: "Jabalpur", khajuraho: "Khajuraho", orchha: "Orchha",
+  pachmarhi: "Pachmarhi", "kanha-bandhavgarh": "Kanha National Park", bhedaghat: "Bhedaghat", bastar: "Jagdalpur",
+  guwahati: "Guwahati", shillong: "Shillong", gangtok: "Gangtok", cherrapunji: "Cherrapunji", mawlynnong: "Mawlynnong", ziro: "Ziro", tawang: "Tawang",
+  majuli: "Majuli", dzukou: "Dzükou Valley",
+};

@@ -1,3 +1,5 @@
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { DestinationChip } from "./DestinationChip";
 
@@ -18,6 +20,15 @@ export function PageHeader({
   return (
     <header className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
+        <nav aria-label="Breadcrumb" className="muted mb-2 flex items-center gap-1 text-xs font-medium">
+          <Link href="/" className="hover:text-rose-500">
+            Home
+          </Link>
+          <ChevronRight className="h-3 w-3 opacity-60" aria-hidden />
+          <span aria-current="page" className="text-[var(--ink)]">
+            {eyebrow}
+          </span>
+        </nav>
         <p className="eyebrow">{eyebrow}</p>
         <h1 className="mt-1 font-display text-3xl font-bold leading-tight sm:text-4xl">{title}</h1>
         {destination && <DestinationChip className="mt-3" />}

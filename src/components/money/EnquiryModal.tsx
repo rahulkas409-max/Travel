@@ -62,7 +62,7 @@ function EnquiryModal({ request, onClose }: { request: EnquiryRequest | null; on
   const [nights, setNights] = useState(Math.max(1, config.days - 1));
   const [budget, setBudget] = useState(config.budget);
   const [message, setMessage] = useState("");
-  const [consent, setConsent] = useState(true);
+  const [consent, setConsent] = useState(false);
   const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
@@ -93,6 +93,7 @@ function EnquiryModal({ request, onClose }: { request: EnquiryRequest | null; on
     budgetPerPerson: budget,
     message,
     consent,
+    adult: consent,
     website,
     source: request?.source ?? "web",
   };
@@ -195,9 +196,10 @@ function EnquiryModal({ request, onClose }: { request: EnquiryRequest | null; on
           <label className="flex items-start gap-2 text-xs">
             <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-4 w-4 accent-rose-500" />
             <span className="muted">
-              I agree to be contacted about this trip on WhatsApp/phone/email. See our{" "}
+              I am 18 or older and I consent to {BUSINESS.name} using these details only to send quotes for this trip and to share them with up to 3
+              relevant properties/operators. I can withdraw consent anytime —{" "}
               <Link href="/privacy" className="underline">
-                privacy policy
+                privacy notice
               </Link>
               .
             </span>
@@ -206,7 +208,7 @@ function EnquiryModal({ request, onClose }: { request: EnquiryRequest | null; on
           {status.kind === "error" && <p className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-200">{status.message}</p>}
 
           <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
-            <button type="submit" disabled={status.kind === "sending"} className="btn-primary !min-h-[50px] text-base">
+            <button type="submit" disabled={status.kind === "sending" || !consent} className="btn-primary !min-h-[50px] text-base">
               {status.kind === "sending" ? <Loader2 className="h-5 w-5 animate-spin" /> : null} Get my free quotes
             </button>
             <a href={whatsappLink(waText)} target="_blank" rel="noopener noreferrer" className="btn border border-[var(--line)]">

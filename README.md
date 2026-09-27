@@ -15,6 +15,7 @@ Requires Node 18.18+ (tested on Node 22).
 
 | Module | Route | Highlights |
 | --- | --- | --- |
+| **Typography** | all | Manrope for UI text and Fraunces for display headings (both self-hosted through `next/font`). Colours meet WCAG 2.1 AA / GIGW 3.0 contrast. |
 | **Home** | `/` | A MakeMyTrip/Goibibo-style search card with service tabs (Trip Planner, Farmhouses, Stays, Surprise, Food, Transit), trip-type radios, and big destination, date, days and traveller fields. Below it: trending destinations, handpicked collections, explore-by-region, top-rated farmhouses, and "continue planning". |
 | **Destinations** | `/destinations`, `/destinations/[id]` | Browse all 68 destinations with search and region, tier and collection filters. Each destination has a static page with a photo mosaic, live Wikipedia "About" text, a live 7-day forecast, experiences, stays, food, getting-there info, nearby places, and live booking links. |
 | **The Vibe Bar** | every page | Floating occasion toggle (Romantic · Offsite · School · Solo/Friends). The active tab has a spring-driven moving pill (`layoutId="activeTab"`). It also holds the budget slider, pace control and day and group-size steppers. |
@@ -58,10 +59,11 @@ src/components/{layout,itinerary,game,stays,food,logistics,export,ui}
 | Source | Used for | Refresh |
 | --- | --- | --- |
 | Wikipedia REST API | Destination lead photos + "About" text | cached 5 days |
-| Wikimedia Commons API | Photo search for activities, dishes, stays, collections; author & license per file | cached 3 days |
+| Wikimedia Commons API | Photo search (Commons "Quality images" first) for activities, dishes, stays, collections; author & license per file | cached 3 days |
+| Wikivoyage API | Curated panoramic banner + travel-guide intro on every destination page | cached 5 days |
 | Open-Meteo | Current weather + 7-day forecast | cached 1 hour |
 
-All three are CORS-enabled and free. Responses are cached in LocalStorage, and at most 4 requests run at once. Every lookup fails soft: open photo → curated photo → drawn postcard, so nothing ever shows as broken. The photo viewer shows the author and license and links to the source page.
+All four are CORS-enabled and free. Responses are cached in LocalStorage, and at most 4 requests run at once. Every lookup fails soft: open photo → curated photo → drawn postcard, so nothing ever shows as broken. The photo viewer shows the author and license and links to the source page.
 
 "Live availability" tiles open Booking.com, Airbnb and Google Maps searches prefilled with your destination, dates and guests. The MakeMyTrip and Goibibo tiles open those sites' hotel pages. There are also links for Google Flights, IRCTC and redBus.
 
@@ -90,7 +92,12 @@ Everything is free for travellers. Revenue comes from partners and organisers, a
 - `/partner` – host signup
 - `/pro` – buy or unlock Pro
 - `/admin` – setup checklist and Pro codes
-- `/privacy`, `/terms`, `/disclosure` – legal pages
+- `/contact` – grievance & data-rights form (Grievance Officer, 48 h / 30 day timelines)
+- `/privacy` (DPDP Act 2023 notice), `/terms`, `/refunds`, `/disclosure` – legal pages
+
+**Legal identity (India).** Set `NEXT_PUBLIC_LEGAL_NAME`, `NEXT_PUBLIC_BUSINESS_ADDRESS`, `NEXT_PUBLIC_GRIEVANCE_OFFICER`, `NEXT_PUBLIC_GRIEVANCE_EMAIL` and `NEXT_PUBLIC_JURISDICTION`. The Consumer Protection (E-Commerce) Rules 2020 and IT Rules 2021 require these to be shown publicly.
+
+**Images.** Photos come only from openly licensed sources (Wikipedia, Wikivoyage, Wikimedia Commons), with credit shown. Don't scrape Google Images: most results are copyrighted.
 
 **Supabase table (optional):**
 

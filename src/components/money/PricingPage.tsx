@@ -104,7 +104,7 @@ export function PricingPage() {
               <tr className="border-b border-[var(--line)] text-left text-xs uppercase tracking-wider opacity-70">
                 <th className="p-3">What you pay</th>
                 <th className="p-3">Typical elsewhere</th>
-                <th className="p-3 text-rose-600 dark:text-rose-300">RoamIndia</th>
+                <th className="p-3 text-rose-700 dark:text-rose-300">RoamIndia</th>
               </tr>
             </thead>
             <tbody>
@@ -141,7 +141,7 @@ export function PricingPage() {
       </section>
 
       <p className="muted flex items-center justify-center gap-1.5 text-center text-xs">
-        <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500" /> Prices include no hidden charges. GST applied where applicable.
+        <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500" /> All prices are final and inclusive of all taxes — no hidden charges at checkout.
       </p>
 
       <Sheet open={!!buy} onClose={() => setBuy(null)} title="Checkout" subtitle="UPI (0% fee) or secure card checkout">

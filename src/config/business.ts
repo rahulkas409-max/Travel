@@ -22,6 +22,15 @@ export const BUSINESS = {
   upiId: env(process.env.NEXT_PUBLIC_UPI_ID),
   upiName: env(process.env.NEXT_PUBLIC_UPI_NAME) ?? "RoamIndia",
   gstin: env(process.env.NEXT_PUBLIC_GSTIN),
+  /** Registered legal name (e.g. "RoamIndia Travel Tech Pvt Ltd" or proprietor name). */
+  legalName: env(process.env.NEXT_PUBLIC_LEGAL_NAME) ?? env(process.env.NEXT_PUBLIC_BUSINESS_NAME) ?? "RoamIndia",
+  /** Postal address — required on e-commerce / contact pages under Indian consumer rules. */
+  address: env(process.env.NEXT_PUBLIC_BUSINESS_ADDRESS),
+  /** Grievance Officer (IT Rules 2021, Consumer Protection (E-Commerce) Rules 2020, DPDP Act 2023). */
+  grievanceOfficer: env(process.env.NEXT_PUBLIC_GRIEVANCE_OFFICER),
+  grievanceEmail: env(process.env.NEXT_PUBLIC_GRIEVANCE_EMAIL) ?? env(process.env.NEXT_PUBLIC_CONTACT_EMAIL),
+  /** Courts with jurisdiction for the Terms (e.g. "Pune, Maharashtra"). */
+  jurisdiction: env(process.env.NEXT_PUBLIC_JURISDICTION) ?? "the city of the business's registered office, India",
 };
 
 /** Affiliate / partner IDs appended to outbound booking links. */

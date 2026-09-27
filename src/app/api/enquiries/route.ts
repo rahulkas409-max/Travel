@@ -24,14 +24,16 @@ export async function POST(req: Request) {
   // Honeypot: real users never fill this hidden field.
   if (str(body.website)) return NextResponse.json({ ok: true, id: "RI-OK", stored: false });
 
-  const type = body.type === "property" || body.type === "listing" ? body.type : "group";
+  const type = body.type === "property" || body.type === "listing" || body.type === "grievance" ? body.type : "group";
   const name = str(body.name, 80);
   const phone = str(body.phone, 20)?.replace(/[^\d+]/g, "");
   const email = str(body.email, 120);
   if (!name || name.length < 2) return NextResponse.json({ ok: false, error: "Please enter your name." }, { status: 400 });
   if (!phone || phone.replace(/\D/g, "").length < 10) return NextResponse.json({ ok: false, error: "Please enter a valid phone / WhatsApp number." }, { status: 400 });
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return NextResponse.json({ ok: false, error: "Please enter a valid email or leave it blank." }, { status: 400 });
-  if (body.consent !== true) return NextResponse.json({ ok: false, error: "Please agree to be contacted." }, { status: 400 });
+  if (body.consent !== true) return NextResponse.json({ ok: false, error: "Please give consent so we can respond to you." }, { status: 400 });
+  if (type !== "grievance" && body.adult !== true) return NextResponse.json({ ok: false, error: "Please confirm you are 18 or older (or ask a parent/guardian to submit)." }, { status: 400 });
+  if (type === "grievance" && (str(body.message, 2000)?.length ?? 0) < 10) return NextResponse.json({ ok: false, error: "Please describe your concern (at least 10 characters)." }, { status: 400 });
   if (type === "listing" && !str(body.businessName)) return NextResponse.json({ ok: false, error: "Please enter your property name." }, { status: 400 });
 
   const rec: EnquiryRecord = {
@@ -50,11 +52,12 @@ export async function POST(req: Request) {
     startDate: str(body.startDate, 10),
     nights: num(body.nights, 0, 60),
     budgetPerPerson: num(body.budgetPerPerson, 0, 1_000_000),
-    message: str(body.message, 1000),
+    message: str(body.message, type === "grievance" ? 2000 : 1000),
     businessName: str(body.businessName, 120),
     city: str(body.city, 80),
     propertyType: str(body.propertyType, 40),
     plan: str(body.plan, 20),
+    category: str(body.category, 40),
     source: str(body.source, 60) ?? "web",
   };
 

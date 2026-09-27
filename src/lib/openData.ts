@@ -260,6 +260,24 @@ function toOpenImage(page: NonNullable<NonNullable<CommonsResponse["query"]>["pa
 export function searchCommons(query: string, limit = 12): Promise<OpenImage[]> {
   const q = query.trim();
   if (!q) return Promise.resolve([]);
+  const key = `cs2:${hashString(q.toLowerCase())}`;
+  const cached = cacheGet<OpenImage[]>(key);
+  if (cached) return Promise.resolve(cached);
+  return dedupe(key, async () => {
+    // Prefer community-reviewed "Quality images", then fall back to all photos.
+    const quality = await searchCommonsRaw(`${q} incategory:"Quality images"`, limit);
+    const plain = quality === null || quality.length < 3 ? await searchCommonsRaw(q, limit) : [];
+    if (quality === null && plain === null) return [];
+    const seen = new Set<string>();
+    const merged = [...(quality ?? []), ...(plain ?? [])].filter((x) => (seen.has(x.thumb) ? false : (seen.add(x.thumb), true)));
+    cacheSet(key, merged, merged.length ? TTL.search : TTL.miss);
+    return merged;
+  });
+}
+
+/** One Commons search request. Returns null on network failure (so it isn't cached). */
+function searchCommonsRaw(query: string, limit: number): Promise<OpenImage[] | null> {
+  const q = query.trim();
   const key = `cs:${hashString(q.toLowerCase())}`;
   const cached = cacheGet<OpenImage[]>(key);
   if (cached) return Promise.resolve(cached);
@@ -278,12 +296,12 @@ export function searchCommons(query: string, limit = 12): Promise<OpenImage[]> {
       iiextmetadatafilter: "Artist|LicenseShortName",
     });
     const data = await getJSON<CommonsResponse>(`https://commons.wikimedia.org/w/api.php?${params}`);
-    if (!data) return []; // network failure: don't cache, retry next time
+    if (!data) return null; // network failure: don't cache, retry next time
     const pages = Object.values(data.query?.pages ?? {}).sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
     const images = pages
       .map(toOpenImage)
       .filter((x): x is OpenImage => !!x)
-      .filter((x) => x.width >= 800 && x.width / x.height >= 1.05 && x.width / x.height <= 2.4);
+      .filter((x) => x.width >= 1000 && x.width / x.height >= 1.05 && x.width / x.height <= 2.4);
     cacheSet(key, images, images.length ? TTL.search : TTL.miss);
     return images;
   });
@@ -315,6 +333,76 @@ export function getFileCredit(file: string): Promise<{ author?: string; license?
     };
     cacheSet(key, credit, TTL.file);
     return credit;
+  });
+}
+
+/* ─────────────────────────── Wikivoyage ─────────────────────────── */
+
+interface VoyagePageProps {
+  query?: { pages?: Record<string, { missing?: string; pageprops?: { wpb_banner?: string } }> };
+}
+
+/**
+ * Wikivoyage's hand-picked panoramic page banner for a destination, resolved to
+ * a Commons rendition (with author + license) via the Commons API.
+ */
+export function getVoyageBanner(title: string): Promise<OpenImage | null> {
+  const key = `wvb:${title}`;
+  const cached = cacheGet<OpenImage | "miss">(key);
+  if (cached !== undefined) return Promise.resolve(cached === "miss" ? null : cached);
+  return dedupe(key, async () => {
+    const p = new URLSearchParams({ action: "query", format: "json", origin: "*", prop: "pageprops", ppprop: "wpb_banner", redirects: "1", titles: title });
+    const data = await getJSON<VoyagePageProps>(`https://en.wikivoyage.org/w/api.php?${p}`);
+    if (!data) return null;
+    const banner = Object.values(data.query?.pages ?? {})[0]?.pageprops?.wpb_banner;
+    if (!banner) {
+      cacheSet(key, "miss", TTL.miss);
+      return null;
+    }
+    const ip = new URLSearchParams({
+      action: "query",
+      format: "json",
+      origin: "*",
+      titles: `File:${banner}`,
+      prop: "imageinfo",
+      iiprop: "url|size|mime|extmetadata",
+      iiurlwidth: "1920",
+      iiextmetadatafilter: "Artist|LicenseShortName",
+    });
+    const info = await getJSON<CommonsResponse>(`https://commons.wikimedia.org/w/api.php?${ip}`);
+    const page = Object.values(info?.query?.pages ?? {})[0];
+    const img = page ? toOpenImage(page) : null;
+    if (!img) {
+      cacheSet(key, "miss", TTL.miss);
+      return null;
+    }
+    const withBanner: OpenImage = { ...img, thumb: img.thumb, full: img.full, provider: "Wikimedia Commons" };
+    cacheSet(key, withBanner, TTL.summary);
+    return withBanner;
+  });
+}
+
+export interface VoyageSummary {
+  title: string;
+  extract: string;
+  url: string;
+}
+
+/** Wikivoyage lead text — practical travel intro, community-maintained (CC BY-SA). */
+export function getVoyageSummary(title: string): Promise<VoyageSummary | null> {
+  const key = `wvs:${title}`;
+  const cached = cacheGet<VoyageSummary | "miss">(key);
+  if (cached !== undefined) return Promise.resolve(cached === "miss" ? null : cached);
+  return dedupe(key, async () => {
+    const d = await getJSON<RestSummary>(`https://en.wikivoyage.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g, "_"))}`);
+    if (!d) return null;
+    if (!d.extract || d.type === "disambiguation") {
+      cacheSet(key, "miss", TTL.miss);
+      return null;
+    }
+    const v = { title: d.title, extract: d.extract, url: d.content_urls?.desktop?.page ?? `https://en.wikivoyage.org/wiki/${encodeURIComponent(title)}` };
+    cacheSet(key, v, TTL.summary);
+    return v;
   });
 }
 

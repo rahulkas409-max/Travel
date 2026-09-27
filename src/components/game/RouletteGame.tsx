@@ -97,7 +97,7 @@ export function RouletteGame() {
                     <li key={s.destination.id} className="flex items-center gap-2 text-sm">
                       <SmartImage source={destinationSource(s.destination)} width={120} className="h-8 w-8 shrink-0 rounded-lg" />
                       <span className="min-w-0 flex-1 truncate">{s.destination.name}</span>
-                      <span className="text-xs font-bold tabular-nums text-sage-600 dark:text-sage-300">{s.percent}%</span>
+                      <span className="text-xs font-bold tabular-nums text-sage-700 dark:text-sage-300">{s.percent}%</span>
                     </li>
                   ))}
               </ul>
@@ -112,7 +112,7 @@ export function RouletteGame() {
       {rouletteWins.length > 0 && (
         <section className="mt-12">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 font-display text-xl font-semibold">
+            <h2 className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
               <History className="h-5 w-5 text-marigold-500" /> Past spins
             </h2>
             <button type="button" onClick={clearRouletteWins} className="muted inline-flex items-center gap-1 text-xs hover:text-rose-500">

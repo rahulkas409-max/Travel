@@ -10,7 +10,7 @@ export function TransitBuffer({ s }: { s: ScheduledItem }) {
     <div className="relative flex flex-col gap-1 py-2 pl-6 text-xs">
       <span className="absolute bottom-0 left-[11px] top-0 w-px border-l-2 border-dashed border-stone-300 dark:border-stone-700" aria-hidden />
       {s.transit && (
-        <p className={cn("relative inline-flex items-start gap-1.5", heavy ? "font-semibold text-rose-600 dark:text-rose-300" : "muted")}>
+        <p className={cn("relative inline-flex items-start gap-1.5", heavy ? "font-semibold text-rose-700 dark:text-rose-300" : "muted")}>
           {heavy ? <TriangleAlert className="mt-px h-3.5 w-3.5 shrink-0" /> : <Footprints className="mt-px h-3.5 w-3.5 shrink-0" />}
           <span>
             {s.transit.mins <= 15 ? "Short hop" : `~${duration(s.transit.mins)}`} · {s.transit.fromName} → {s.transit.toName}

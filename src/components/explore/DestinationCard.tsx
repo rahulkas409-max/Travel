@@ -32,7 +32,7 @@ export function DestinationCard({ d, className, size = "md" }: { d: Destination;
       </div>
       <div className="absolute inset-x-0 bottom-0 p-4 text-white">
         <p className="text-[11px] font-semibold uppercase tracking-wider text-white/75">{d.state}</p>
-        <h3 className="font-display text-2xl font-bold leading-tight">{d.name}</h3>
+        <h3 className="section-title">{d.name}</h3>
         <p className="mt-1 line-clamp-2 text-xs text-white/80">{d.tagline}</p>
         <div className="mt-2.5 flex items-center justify-between text-xs">
           <span className="inline-flex items-center gap-1 text-white/80">
